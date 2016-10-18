@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "661884412480",
+    "firebase_url": "https://isucarpool-a55c8.firebaseio.com",
+    "project_id": "isucarpool-a55c8",
+    "storage_bucket": "isucarpool-a55c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:661884412480:android:d8299f190bb67966",
+        "android_client_info": {
+          "package_name": "com.it326.isucarpool"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "661884412480-0r4tjahvkorue1bcgsjhstjd7mmppb5o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtJy5ATJ09TOWdAoDq1x2hW9xTejodOjo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
