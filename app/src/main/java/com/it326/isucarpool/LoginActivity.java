@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
@@ -103,7 +104,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuth == null) {
+        if(mAuth == null) {
+            Toast.makeText(LoginActivity.this, "Null", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -115,15 +117,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
+        Toast.makeText(LoginActivity.this, ":"+email+":"+password, Toast.LENGTH_SHORT).show();
+
         boolean cancel = false;
         View focusView = null;
 
-        // Check for a valid password, if the user entered one.
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
-            focusView = mPasswordView;
-            cancel = true;
-        }
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -137,15 +135,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
             showProgress(true);
-           // mAuthTask = new UserLoginTask(email, password);
-           // mAuthTask.execute((Void) null);
+
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                    showProgress(false);
+
+                    if(!task.isSuccessful()){
+                        Toast.makeText(LoginActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
         }
     }
 
@@ -167,6 +175,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         boolean cancel = false;
         View focusView = null;
+
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
@@ -197,6 +206,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if(!task.isSuccessful()){
                         Toast.makeText(LoginActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
                     }
+                    else {
+                        mAuth.getCurrentUser().sendEmailVerification();
+                    }
                 }
             });
         }
@@ -210,7 +222,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 4;
+        return password.length() > 6;
     }
 
     /**
