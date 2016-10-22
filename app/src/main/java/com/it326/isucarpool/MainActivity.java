@@ -1,9 +1,11 @@
 package com.it326.isucarpool;
 
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,7 +19,11 @@ import android.view.MenuItem;
  * Test
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NotificationsFragment.OnFragmentInteractionListener,
+                    RidesFragment.OnFragmentInteractionListener,
+                    ChatsFragment.OnFragmentInteractionListener,
+                    UserProfileFragment.OnFragmentInteractionListener {
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -72,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
 
         try {
             fragment = (Fragment) fragmentClass.newInstance();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.flContent, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,8 +111,12 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (drawerToggle.onOptionsItemSelected(item)) {
+        if(item.getItemId() == R.id.action_settings) {
+            NotificationsFragment newFragment = new NotificationsFragment();
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.flContent, newFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -112,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
         drawerToggle.syncState();
     }
 
@@ -123,4 +136,8 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }
