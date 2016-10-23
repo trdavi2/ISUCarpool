@@ -3,12 +3,15 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_profile"
-            android:title="Profile" />
+            android:title="@string/profile" />
         <item
             android:id="@+id/nav_rides"
-            android:title="Rides" />
+            android:title="@string/rides" />
         <item
             android:id="@+id/nav_chats"
-            android:title="Chats" />
+            android:title="@string/chats" />
+        <item
+            android:id="@+id/nav_settings"
+            android:title="@string/settings" />
     </group>
 </menu>

@@ -1,5 +1,6 @@
 package com.it326.isucarpool;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.design.widget.NavigationView;
@@ -20,10 +21,11 @@ import android.view.MenuItem;
  */
 
 public class MainActivity extends AppCompatActivity
-        implements NotificationsFragment.OnFragmentInteractionListener,
+        implements UserProfileFragment.OnFragmentInteractionListener,
                     RidesFragment.OnFragmentInteractionListener,
                     ChatsFragment.OnFragmentInteractionListener,
-                    UserProfileFragment.OnFragmentInteractionListener {
+                    SettingsFragment.OnFragmentInteractionListener
+                    {
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -72,6 +74,9 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_chats:
                 fragmentClass = ChatsFragment.class;
                 break;
+            case R.id.nav_settings:
+                fragmentClass = SettingsFragment.class;
+                break;
             default:
                 fragmentClass = UserProfileFragment.class;
         }
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity
             transaction.replace(R.id.flContent, fragment);
             transaction.addToBackStack(null);
             transaction.commit();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -111,12 +117,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == R.id.action_settings) {
-            NotificationsFragment newFragment = new NotificationsFragment();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.flContent, newFragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
+
+        if (drawerToggle.onOptionsItemSelected(item)) {
+
             return true;
         }
         return super.onOptionsItemSelected(item);
