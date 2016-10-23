@@ -28,6 +28,12 @@
             android:text="@string/rider_near_notification"
             android:padding="16dp" />
         <Switch
+            android:id="@+id/sound_setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/sound"
+            android:padding="16dp" />
+        <Switch
             android:id="@+id/vibrate_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -104,5 +104,6 @@
     <string name="rides">Rides</string>
     <string name="chats">Chats</string>
     <string name="settings">Settings</string>
+    <string name="sound">Sound</string>
 
 </resources>
