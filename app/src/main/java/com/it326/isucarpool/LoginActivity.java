@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
+import android.net.nsd.NsdManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -90,7 +91,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailRegisterButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptRegister();
+                Intent intent = new Intent(getBaseContext(), RegisterActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -155,64 +157,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
             });
         }
-    }
-
-    private void attemptRegister() {
-        if(mAuth == null) {
-            Toast.makeText(LoginActivity.this, "Null", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Reset errors.
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
-
-        // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
-        String password = mPasswordView.getText().toString();
-
-        Toast.makeText(LoginActivity.this, ":"+email+":"+password, Toast.LENGTH_SHORT).show();
-
-        boolean cancel = false;
-        View focusView = null;
-
-
-        // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
-            cancel = true;
-        } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
-            cancel = true;
-        }
-
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-            showProgress(true);
-
-            mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                @Override
-                public void onComplete(@NonNull Task<AuthResult> task) {
-
-                    showProgress(false);
-
-                    if(!task.isSuccessful()){
-                        Toast.makeText(LoginActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
-                    }
-                    else {
-                        mAuth.getCurrentUser().sendEmailVerification();
-                    }
-                }
-            });
-        }
-
     }
 
     private boolean isEmailValid(String email) {
