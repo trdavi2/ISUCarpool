@@ -93,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity
             User user = new User(firstName.getText().toString(), lastName.getText().toString(), email.getText().toString());
 
 
-            fb.signInWithEmailAndPassword(em, pwd).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            fb.createUserWithEmailAndPassword(em, pwd).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
 
@@ -103,15 +103,14 @@ public class RegisterActivity extends AppCompatActivity
                         Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
                     }
                     else {
+                        User user = new User(firstName.getText().toString(), lastName.getText().toString(), email.getText().toString());
+                        String uid = fb.getCurrentUser().getUid();
+                        FirebaseDatabase.getInstance().getReference("users").child(uid).child("profile").setValue(user);
                         Intent intent = new Intent(getBaseContext(), MainActivity.class);
                         startActivity(intent);
                     }
                 }
             });
-            String uid = fb.getCurrentUser().getUid();
-            FirebaseDatabase.getInstance().getReference("users").child(uid).child("profile").setValue(user);
-            Intent intent = new Intent(getBaseContext(), MainActivity.class);
-            startActivity(intent);
         }
 
         /*
