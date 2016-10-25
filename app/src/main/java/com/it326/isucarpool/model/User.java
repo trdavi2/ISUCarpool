@@ -9,15 +9,13 @@ public class User
     private String firstName;
     private String lastName;
     private String email;
-    private String password;
     //Whatever other attributes the User should have
 
-    public User(String firstName, String lastName, String email, String password)
+    public User(String firstName, String lastName, String email)
     {
         this.setFirstName(firstName);
         this.setLastName(lastName);
         this.setEmail(email);
-        this.setPassword(password);
     }
 
     public String getFirstName()
@@ -46,11 +44,4 @@ public class User
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

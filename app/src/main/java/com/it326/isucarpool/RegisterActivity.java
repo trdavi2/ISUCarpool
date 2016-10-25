@@ -2,13 +2,18 @@ package com.it326.isucarpool;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.it326.isucarpool.model.User;
 
 public class RegisterActivity extends AppCompatActivity
@@ -85,7 +90,26 @@ public class RegisterActivity extends AppCompatActivity
         }
         else
         {
-            User user = new User(firstName.getText().toString(), lastName.getText().toString(), email.getText().toString(), password.getText().toString());
+            User user = new User(firstName.getText().toString(), lastName.getText().toString(), email.getText().toString());
+
+
+            fb.signInWithEmailAndPassword(em, pwd).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+
+                    //showProgress(false);
+
+                    if(!task.isSuccessful()){
+                        Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
+            String uid = fb.getCurrentUser().getUid();
+            FirebaseDatabase.getInstance().getReference("users").child(uid).child("profile").setValue(user);
             Intent intent = new Intent(getBaseContext(), MainActivity.class);
             startActivity(intent);
         }
