@@ -1,146 +1,114 @@
 package com.it326.isucarpool;
 
 import android.content.Intent;
-import android.content.res.Configuration;
-import android.net.Uri;
+import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.view.View;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-/**
- * Test
- */
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity
-        implements UserProfileFragment.OnFragmentInteractionListener,
-                    RidesFragment.OnFragmentInteractionListener,
-                    ChatsFragment.OnFragmentInteractionListener,
-                    SettingsFragment.OnFragmentInteractionListener
-                    {
-
-    private DrawerLayout mDrawer;
-    private Toolbar toolbar;
-    private NavigationView nvDrawer;
-    private ActionBarDrawerToggle drawerToggle;
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerToggle = setupDrawerToggle();
-        mDrawer.addDrawerListener(drawerToggle);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
 
-        nvDrawer = (NavigationView) findViewById(R.id.nvView);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
-        setupDrawerContent(nvDrawer);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        selectDrawerItem(menuItem);
-                        return true;
-                    }
-                });
-    }
-
-    public void selectDrawerItem(MenuItem menuItem) {
-        // Create a new fragment and specify the fragment to show based on nav item clicked
-        Fragment fragment = null;
-        Class fragmentClass;
-        switch(menuItem.getItemId()) {
-            case R.id.nav_profile:
-                fragmentClass = UserProfileFragment.class;
-                break;
-            case R.id.nav_rides:
-                fragmentClass = RidesFragment.class;
-                break;
-            case R.id.nav_chats:
-                fragmentClass = ChatsFragment.class;
-                break;
-            case R.id.nav_settings:
-                fragmentClass = SettingsFragment.class;
-                break;
-            default:
-                fragmentClass = UserProfileFragment.class;
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.flContent, fragment);
-            transaction.addToBackStack(null);
-            transaction.commit();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
-
-        // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
-        // Set action bar title
-        setTitle(menuItem.getTitle());
-        // Close the navigation drawer
-        mDrawer.closeDrawers();
-    }
-
-    private ActionBarDrawerToggle setupDrawerToggle() {
-        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
 
-        if (drawerToggle.onOptionsItemSelected(item)) {
-
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
             return true;
         }
+
         return super.onOptionsItemSelected(item);
-
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        drawerToggle.syncState();
-    }
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        Intent intent;
+        if (id == R.id.nav_rides) {
+            intent = new Intent(this, RidesActivity.class);
+            startActivity(intent);
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        // Pass any configuration change to the drawer toggles
-        drawerToggle.onConfigurationChanged(newConfig);
-    }
+        } else if (id == R.id.nav_chats) {
+            intent = new Intent(this, ChatsActivity.class);
+            startActivity(intent);
 
-    @Override
-    public void onFragmentInteraction(Uri uri) {
+        } else if (id == R.id.nav_profile) {
+            intent = new Intent(this, UserProfileActivity.class);
+            startActivity(intent);
 
+        } else if (id == R.id.nav_settings) {
+            intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+
+        } else if (id == R.id.nav_logout) {
+            FirebaseAuth.getInstance().signOut();
+            intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 }

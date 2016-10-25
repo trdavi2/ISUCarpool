@@ -5,10 +5,20 @@
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context="com.it326.isucarpool.RegisterActivity">
-<include
-    layout="@layout/toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary">
+
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
+
     <!-- Login progress -->
 <ProgressBar
 android:id="@+id/login_progress"
@@ -41,7 +51,7 @@ android:paddingTop="@dimen/activity_vertical_margin">
             android:id="@+id/firstName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="First name:"
+            android:hint="@string/first_name"
             android:inputType=""
             android:maxLines="1"
             />
@@ -56,7 +66,7 @@ android:paddingTop="@dimen/activity_vertical_margin">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/lastName"
-            android:hint="Last name:"
+            android:hint="@string/last_name"
             android:maxLines="1"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -69,7 +79,7 @@ android:paddingTop="@dimen/activity_vertical_margin">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/registerEmail"
-            android:hint="Email:"
+            android:hint="@string/email"
             android:maxLines="1"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -82,7 +92,7 @@ android:paddingTop="@dimen/activity_vertical_margin">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/registerPassword"
-            android:hint="Password:"
+            android:hint="@string/password"
             android:maxLines="1"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -95,7 +105,7 @@ android:paddingTop="@dimen/activity_vertical_margin">
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/registerConfirmPassword"
-            android:hint="Confirm password:"
+            android:hint="@string/confirm_password"
             android:maxLines="1"/>
 
     </android.support.design.widget.TextInputLayout>
@@ -106,7 +116,7 @@ android:paddingTop="@dimen/activity_vertical_margin">
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Register"
+        android:text="@string/register"
         android:textStyle="bold" />
 
 </LinearLayout>
