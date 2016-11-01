@@ -11,6 +11,12 @@ public class User
     private String email;
     //Whatever other attributes the User should have
 
+    public User(){
+        firstName = "";
+        lastName = "";
+        email = "";
+    }
+
     public User(String firstName, String lastName, String email)
     {
         this.setFirstName(firstName);

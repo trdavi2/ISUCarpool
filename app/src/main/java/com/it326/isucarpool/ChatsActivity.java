@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.it326.isucarpool.model.User;
+
 public class ChatsActivity extends AppCompatActivity {
 
     @Override
@@ -15,7 +17,6 @@ public class ChatsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chats);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 

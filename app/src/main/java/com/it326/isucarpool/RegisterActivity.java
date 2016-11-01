@@ -92,8 +92,6 @@ public class RegisterActivity extends AppCompatActivity
         }
         else
         {
-            User user = new User(firstName.getText().toString(), lastName.getText().toString(), email.getText().toString());
-
 
             fb.createUserWithEmailAndPassword(em, pwd).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
