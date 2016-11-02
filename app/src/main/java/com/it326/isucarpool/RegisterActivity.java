@@ -2,14 +2,12 @@ package com.it326.isucarpool;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,11 +24,6 @@ public class RegisterActivity extends AppCompatActivity
     private AutoCompleteTextView email;
     private AutoCompleteTextView password;
     private AutoCompleteTextView confirmPassword;
-    private AutoCompleteTextView address;
-    private AutoCompleteTextView city;
-    private AutoCompleteTextView state;
-    private RadioButton male;
-    private RadioButton female;
     private Button reg;
 
     private FirebaseAuth fb;
@@ -49,11 +42,6 @@ public class RegisterActivity extends AppCompatActivity
         email = (AutoCompleteTextView) findViewById(R.id.registerEmail);
         password = (AutoCompleteTextView) findViewById(R.id.registerPassword);
         confirmPassword = (AutoCompleteTextView) findViewById(R.id.registerConfirmPassword);
-        address = (AutoCompleteTextView) findViewById(R.id.address);
-        city = (AutoCompleteTextView) findViewById(R.id.city);
-        state = (AutoCompleteTextView) findViewById(R.id.state);
-        male = (RadioButton) findViewById(R.id.male);
-        female = (RadioButton) findViewById(R.id.female);
 
         reg = (Button) findViewById(R.id.registerUserButton);
         reg.setOnClickListener(new View.OnClickListener() {
@@ -75,17 +63,10 @@ public class RegisterActivity extends AppCompatActivity
         password.setError(null);
         confirmPassword.setError(null);
         email.setError(null);
-        address.setError(null);
-        city.setError(null);
-        state.setError(null);
 
         String pwd = password.getText().toString();
         String cpwd = confirmPassword.getText().toString();
-        final String em = email.getText().toString();
-        final String ad = address.getText().toString();
-        final String c = city.getText().toString();
-        final String s = state.getText().toString();
-        String gender = "";
+        String em = email.getText().toString();
         boolean cancel = false;
         View focusView = null;
 
@@ -105,18 +86,13 @@ public class RegisterActivity extends AppCompatActivity
             focusView = email;
         }
 
-        if(male.isChecked())
-            gender = "Male";
-        else
-            gender = "Female";
-
         if(cancel)
         {
             focusView.requestFocus();
         }
         else
         {
-            final String finalGender = gender;
+
             fb.createUserWithEmailAndPassword(em, pwd).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
@@ -127,13 +103,11 @@ public class RegisterActivity extends AppCompatActivity
                         Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        User user = new User(firstName.getText().toString(), lastName.getText().toString(),
-                                email.getText().toString(), finalGender, address.getText().toString(),
-                                city.getText().toString(), state.getText().toString());
+                        User user = new User(firstName.getText().toString(), lastName.getText().toString(), email.getText().toString());
                         String uid = fb.getCurrentUser().getUid();
                         fb.getCurrentUser().sendEmailVerification();
                         FirebaseDatabase.getInstance().getReference("users").child(uid).child("profile").setValue(user);
-                        Intent intent = new Intent(getBaseContext(), EmailVerificationActivity.class);
+                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
                         startActivity(intent);
                     }
                 }

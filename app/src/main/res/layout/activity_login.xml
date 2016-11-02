@@ -86,12 +86,6 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/not_registered"
-                android:gravity="center"/>
-
             <Button
                 android:id="@+id/email_register_button"
                 style="?android:textAppearanceSmall"

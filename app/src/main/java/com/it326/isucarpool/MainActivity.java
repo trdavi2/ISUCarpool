@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -27,6 +28,8 @@ import com.it326.isucarpool.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.it326.isucarpool.model.User;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,7 +60,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         loadUserInformation(navigationView);
-
     }
 
     @Override
@@ -143,6 +145,8 @@ public class MainActivity extends AppCompatActivity
         };
         ref.addValueEventListener(postListener);
     }
+
+
     public static User getUser(){
         return user;
     }
