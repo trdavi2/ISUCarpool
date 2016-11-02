@@ -16,6 +16,7 @@ public class User
     private String city;
     private String state;
     private ArrayList<Chat> chatsList;
+    private ArrayList<CarpoolOffer> offers;
     //Whatever other attributes the User should have
 
     public User(){
@@ -39,6 +40,8 @@ public class User
         this.setState(state);
         this.setChatsList(new ArrayList<Chat>());
         this.getChatsList().add(new Chat());
+        offers = new ArrayList<CarpoolOffer>();
+
     }
 
     public String getFirstName()
@@ -90,4 +93,8 @@ public class User
     public String getState() { return state; }
 
     public void setState(String state) { this.state = state; }
+
+    public ArrayList<CarpoolOffer> getOffers() { return offers; }
+
+    public void setOffers(ArrayList<CarpoolOffer> offers) { this.offers = offers; }
 }
