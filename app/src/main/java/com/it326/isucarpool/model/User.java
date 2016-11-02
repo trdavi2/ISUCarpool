@@ -11,6 +11,9 @@ public class User
     private String firstName;
     private String lastName;
     private String email;
+    private String gender;
+    private String address;
+    private String city;
     private ArrayList<Chat> chatsList;
     //Whatever other attributes the User should have
 
@@ -18,6 +21,7 @@ public class User
         firstName = "";
         lastName = "";
         email = "";
+        gender = "";
     }
 
     public User(String firstName, String lastName, String email)
@@ -63,4 +67,15 @@ public class User
         this.chatsList = chatsList;
     }
 
+    public String getGender() { return gender; }
+
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getAddress() { return address; }
+
+    public void setAddress(String address) { this.address = address; }
+
+    public String getCity() { return city; }
+
+    public void setCity(String city) { this.city = city; }
 }
