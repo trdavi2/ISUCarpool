@@ -36,5 +36,7 @@
     <string name="confirm_password">Confirm password:</string>
     <string name="register">Register</string>
     <string name="first_name">First name:</string>
+    <string name="send_chat">Send Chat</string>
+    <string name="send_request">Send Request</string>
 
 </resources>
