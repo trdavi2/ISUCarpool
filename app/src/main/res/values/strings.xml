@@ -7,7 +7,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="not_registered">Don't have an account? Register below!</string>
+    <string name="not_registered">Don\'t have an account? Register below!</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_field_required">This field is required</string>
 
@@ -23,6 +23,7 @@
     <string name="sound">Sound</string>
     <string name="title_activity_main">Home</string>
 
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_rides">Rides</string>
@@ -37,5 +38,6 @@
     <string name="confirm_password">Confirm password:</string>
     <string name="register">Register</string>
     <string name="first_name">First name:</string>
+    <string name="title_activity_email_verification">EmailVerificationActivity</string>
 
 </resources>
