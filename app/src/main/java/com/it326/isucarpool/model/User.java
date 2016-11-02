@@ -14,6 +14,7 @@ public class User
     private String gender;
     private String address;
     private String city;
+    private String state;
     private ArrayList<Chat> chatsList;
     //Whatever other attributes the User should have
 
@@ -22,13 +23,20 @@ public class User
         lastName = "";
         email = "";
         gender = "";
+        address = "";
+        city = "";
+        state = "";
     }
 
-    public User(String firstName, String lastName, String email)
+    public User(String firstName, String lastName, String email, String gender, String address, String city, String state)
     {
         this.setFirstName(firstName);
         this.setLastName(lastName);
         this.setEmail(email);
+        this.setGender(gender);
+        this.setAddress(address);
+        this.setCity(city);
+        this.setState(state);
         this.setChatsList(new ArrayList<Chat>());
         this.getChatsList().add(new Chat());
     }
@@ -78,4 +86,8 @@ public class User
     public String getCity() { return city; }
 
     public void setCity(String city) { this.city = city; }
+
+    public String getState() { return state; }
+
+    public void setState(String state) { this.state = state; }
 }
