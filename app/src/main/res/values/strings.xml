@@ -38,5 +38,6 @@
     <string name="first_name">First name:</string>
     <string name="send_chat">Send Chat</string>
     <string name="send_request">Send Request</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

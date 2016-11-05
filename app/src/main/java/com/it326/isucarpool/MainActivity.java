@@ -134,8 +134,8 @@ public class MainActivity extends AppCompatActivity
                 user = dataSnapshot.getValue(User.class);
                 TextView txtName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.name);
                 TextView txtEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email);
-                txtName.setText(user.getFirstName() + " " + user.getLastName());
-                txtEmail.setText(user.getEmail());
+                //txtName.setText(user.getFirstName() + " " + user.getLastName());
+                //txtEmail.setText(user.getEmail());
             }
 
             @Override
