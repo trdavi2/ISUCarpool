@@ -18,6 +18,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity
 
     private static User user = null;
     private GoogleMap map;
+    private SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +66,8 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         loadUserInformation(navigationView);
+        //Starting google map
+        startGoogleMap();
     }
 
     @Override
@@ -147,6 +152,18 @@ public class MainActivity extends AppCompatActivity
             }
         };
         ref.addValueEventListener(postListener);
+    }
+
+    public void startGoogleMap()
+    {
+        mapFragment = new SupportMapFragment();
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                //google map features
+            }
+        });
+        getSupportFragmentManager().beginTransaction().replace(R.id.map, mapFragment).commit();
     }
 
 
