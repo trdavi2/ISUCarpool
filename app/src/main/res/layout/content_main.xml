@@ -13,5 +13,22 @@
     tools:context="com.it326.isucarpool.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:background="@drawable/common_google_signin_btn_text_light"
+        android:id="@+id/startingLocation"
+        android:hint="Starting location"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/startingLocation"
+        android:maxLines="1"
+        android:background="@drawable/common_google_signin_btn_text_light"
+        android:id="@+id/endingLocation"
+        android:hint="Ending location"/>
+
     
 </RelativeLayout>
