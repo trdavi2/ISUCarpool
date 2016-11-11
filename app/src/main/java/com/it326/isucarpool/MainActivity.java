@@ -1,10 +1,18 @@
 package com.it326.isucarpool;
 
+import android.*;
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,12 +22,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,14 +49,19 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.it326.isucarpool.model.User;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.it326.isucarpool.R.id.map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, View.OnClickListener {
 
     private static User user = null;
+    private EditText start;
+    private EditText end;
+    private Button but;
     private GoogleMap map;
     private SupportMapFragment mapFragment;
 
@@ -54,7 +76,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Please provide a starting and ending location.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -67,7 +89,17 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         loadUserInformation(navigationView);
         //Starting google map
-        startGoogleMap();
+        mapFragment = new SupportMapFragment();
+        mapFragment.getMapAsync(this);
+        getSupportFragmentManager().beginTransaction().replace(R.id.map, mapFragment).commit();
+        start = (EditText) findViewById(R.id.startingLocation);
+        end = (EditText) findViewById(R.id.endingLocation);
+        //Buttons
+        start = (EditText) findViewById(R.id.startingLocation);
+        end = (EditText) findViewById(R.id.endingLocation);
+        but = (Button) findViewById(R.id.route);
+        //Doesn't work
+        but.setOnClickListener(this);
     }
 
     @Override
@@ -134,7 +166,8 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    public void loadUserInformation(final NavigationView navigationView){
+
+    public void loadUserInformation(final NavigationView navigationView) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("profile");
         ValueEventListener postListener = new ValueEventListener() {
             @Override
@@ -154,18 +187,33 @@ public class MainActivity extends AppCompatActivity
         ref.addValueEventListener(postListener);
     }
 
-    public void startGoogleMap()
-    {
-        mapFragment = new SupportMapFragment();
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                //google map features
-            }
-        });
-        getSupportFragmentManager().beginTransaction().replace(R.id.map, mapFragment).commit();
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        map = googleMap;
+
     }
 
+    @Override
+    public void onClick(View v) {
+        String starting_point = start.getText().toString();
+        //String ending_point = end.getText().toString();
+        List<Address> addressList = null;
+        if (starting_point != null || !start.equals(""))
+        {
+            Geocoder geocoder = new Geocoder(this);
+
+            try {
+                addressList = geocoder.getFromLocationName(starting_point, 1);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Address address = addressList.get(0);
+            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+            map.addMarker(new MarkerOptions().position(latLng).title(starting_point));
+            map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
+    }
 
     public static User getUser(){
         return user;
