@@ -6,7 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -190,7 +193,19 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        map.setMyLocationEnabled(true);
+        LocationManager service = (LocationManager)
 
+                getSystemService(LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = service.getBestProvider(criteria, false);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        Location location = service.getLastKnownLocation(provider);
+        LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
+        map.addMarker(new MarkerOptions().position(userLocation).title("Marker at my location"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
     }
 
     @Override
