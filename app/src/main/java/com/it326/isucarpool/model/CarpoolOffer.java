@@ -6,21 +6,40 @@ package com.it326.isucarpool.model;
 
 public class CarpoolOffer
 {
-    private String uid;
+    private String driverId;
     private String startingPoint;
     private String destination;
+    private String description;
+    private String gender;
+    private String radius;
+    private String departure;
 
     public CarpoolOffer()
     {
         setStartingPoint("");
         setDestination("");
-        setUid("");
+        setDriverId("");
+        setDescription("");
+        setGender("");
+        setRadius("");
+        setDeparture("");
     }
 
+    public CarpoolOffer(String driverId, String startingPoint, String destination, String description,
+                        String gender, String radius, String departure)
+    {
+        this.driverId = driverId;
+        this.startingPoint = startingPoint;
+        this.destination = destination;
+        this.description = description;
+        this.gender = gender;
+        this.radius = radius;
+        this.departure = departure;
+    }
 
-    public String getUid() { return uid; }
+    public String getDriverId() { return driverId; }
 
-    public void setUid(String uid) { this.uid = uid; }
+    public void setDriverId(String driverId) { this.driverId = driverId; }
 
     public String getStartingPoint() { return startingPoint; }
 
@@ -29,4 +48,20 @@ public class CarpoolOffer
     public String getDestination() { return destination; }
 
     public void setDestination(String destination) { this.destination = destination; }
+
+    public String getDescription() { return description; }
+
+    public void setDescription(String description) { this.description = description; }
+
+    public String getGender() { return gender; }
+
+    public void setGender(String gender) { this.gender = gender; }
+
+    public String getRadius() { return radius; }
+
+    public void setRadius(String radius) { this.radius = radius; }
+
+    public String getDeparture() { return departure; }
+
+    public void setDeparture(String departure) { this.departure = departure; }
 }

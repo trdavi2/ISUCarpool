@@ -23,20 +23,23 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.User;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener, CreateRideFragment.OnFragmentInteractionListener {
+public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener, CreateRideFragment.createRideFragmentListener {
 
     private User user = MainActivity.getUser();
-    private ArrayList<User> userList = new ArrayList<>();
+    private ArrayList<CarpoolOffer> rideList = new ArrayList<>();
+    private FirebaseAuth fb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,55 +75,9 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
 
             }
         });
-        EditText date = (EditText)findViewById(R.id.departtime);
-
-
-        getAllUsers();
+        getAllRides();
     }
-    /*public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if (!s.toString().equals(current)) {
-            String clean = s.toString().replaceAll("[^\\d.]", "");
-            String cleanC = current.replaceAll("[^\\d.]", "");
 
-            int cl = clean.length();
-            int sel = cl;
-            for (int i = 2; i <= cl && i < 6; i += 2) {
-                sel++;
-            }
-            //Fix for pressing delete next to a forward slash
-            if (clean.equals(cleanC)) sel--;
-
-            if (clean.length() < 8) {
-                clean = clean + ddmmyyyy.substring(clean.length());
-            } else {
-                //This part makes sure that when we finish entering numbers
-                //the date is correct, fixing it otherwise
-                int day = Integer.parseInt(clean.substring(0, 2));
-                int mon = Integer.parseInt(clean.substring(2, 4));
-                int year = Integer.parseInt(clean.substring(4, 8));
-
-                if (mon > 12) mon = 12;
-                cal.set(Calendar.MONTH, mon - 1);
-                year = (year < 1900) ? 1900 : (year > 2100) ? 2100 : year;
-                cal.set(Calendar.YEAR, year);
-                // ^ first set year for the line below to work correctly
-                //with leap years - otherwise, date e.g. 29/02/2012
-                //would be automatically corrected to 28/02/2012
-
-                day = (day > cal.getActualMaximum(Calendar.DATE)) ? cal.getActualMaximum(Calendar.DATE) : day;
-                clean = String.format("%02d%02d%02d", day, mon, year);
-            }
-
-            clean = String.format("%s/%s/%s", clean.substring(0, 2),
-                    clean.substring(2, 4),
-                    clean.substring(4, 8));
-
-            sel = sel < 0 ? 0 : sel;
-            current = clean;
-            date.setText(current);
-            date.setSelection(sel < current.length() ? sel : current.length());
-        }
-    }*/
     @Override
     public void onBackPressed() {
         int count = getSupportFragmentManager().getBackStackEntryCount();
@@ -132,13 +89,14 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         }
         super.onBackPressed();
     }
-    public void getAllUsers(){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users");
+    public void getAllRides(){
+        rideList.clear();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides");
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    fillUserList(child.getKey());
+                    fillRidesList(child.getKey());
                 }
             }
 
@@ -150,13 +108,13 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         ref.addValueEventListener(postListener);
     }
 
-    private void fillUserList(String key) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(key).child("profile");
+    private void fillRidesList(String key) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides").child(key);
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User u = dataSnapshot.getValue(User.class);
-                userList.add(u);
+                CarpoolOffer offer = dataSnapshot.getValue(CarpoolOffer.class);
+                rideList.add(offer);
                 drawListView();
             }
 
@@ -170,7 +128,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
 
     public void drawListView(){
         ListView yourListView = (ListView) findViewById(R.id.rideslistview);
-        RidesListAdapter customAdapter = new RidesListAdapter(this, R.layout.adapter_rides_listitem, userList);
+        RidesListAdapter customAdapter = new RidesListAdapter(this, R.layout.adapter_rides_listitem, rideList);
         yourListView.setAdapter(customAdapter);
         Fragment frg = null;
         frg = getSupportFragmentManager().findFragmentById(R.id.fragment);
@@ -208,9 +166,30 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         }
     }
 
-
     @Override
-    public void onFragmentInteraction(Uri uri) {
-
+    public void createRideBtn(String startingPoint, String destination, String description, String gender,
+                              String radius, String departure) {
+        fb = FirebaseAuth.getInstance();
+        CarpoolOffer offer = new CarpoolOffer(fb.getCurrentUser().getUid(), startingPoint, destination, description, gender, radius, departure);
+        FirebaseDatabase.getInstance().getReference("rides").push().setValue(offer, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    System.out.println("Data could not be saved. " + databaseError.getMessage());
+                } else {
+                    rideList.clear();
+                    getAllRides();
+                    Toast.makeText(getApplicationContext(), "Data submitted successfully.",
+                            Toast.LENGTH_LONG).show();
+                    if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                        getSupportFragmentManager().popBackStackImmediate();
+                        ListView list = (ListView) findViewById(R.id.rideslistview);
+                        list.setVisibility(View.VISIBLE);
+                        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                        fab.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
     }
 }
