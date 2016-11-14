@@ -11,6 +11,7 @@ public class User
     private String firstName;
     private String lastName;
     private String email;
+    public String gender = "Male";
     private ArrayList<Chat> chatsList;
     //Whatever other attributes the User should have
 
