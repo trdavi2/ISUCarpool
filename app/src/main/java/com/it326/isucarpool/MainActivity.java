@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity
         start = (EditText) findViewById(R.id.startingLocation);
         end = (EditText) findViewById(R.id.endingLocation);
         but = (Button) findViewById(R.id.route);
-        //Doesn't work
         but.setOnClickListener(this);
     }
 
@@ -193,7 +192,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-        map.setMyLocationEnabled(true);
+       /* map.setMyLocationEnabled(true);
         LocationManager service = (LocationManager)
 
                 getSystemService(LOCATION_SERVICE);
@@ -205,7 +204,7 @@ public class MainActivity extends AppCompatActivity
         Location location = service.getLastKnownLocation(provider);
         LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
         map.addMarker(new MarkerOptions().position(userLocation).title("Marker at my location"));
-        map.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+        map.moveCamera(CameraUpdateFactory.newLatLng(userLocation));*/
     }
 
     @Override

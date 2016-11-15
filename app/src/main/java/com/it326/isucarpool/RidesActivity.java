@@ -114,11 +114,11 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 CarpoolOffer offer = dataSnapshot.getValue(CarpoolOffer.class);
-                if(offer.getGender().equals("Males") && user.gender == "Male"){
+                if(offer.getGender().equals("Males") && user.getGender() == "Male"){
                     rideList.add(offer);
                     drawListView();
                 }
-                else if(offer.getGender().equals("Females") && user.gender == "Female"){
+                else if(offer.getGender().equals("Females") && user.getGender() == "Female"){
                     rideList.add(offer);
                     drawListView();
                 }
