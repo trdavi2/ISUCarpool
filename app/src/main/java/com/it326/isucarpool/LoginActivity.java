@@ -162,7 +162,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     showProgress(false);
 
                     if(!task.isSuccessful()){
-                        Toast.makeText(LoginActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(LoginActivity.this, "Could not log in", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Intent intent = new Intent(getBaseContext(), MainActivity.class);

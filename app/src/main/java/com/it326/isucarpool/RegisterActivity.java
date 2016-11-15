@@ -94,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity
         final String cityText = city.getText().toString();
         final String stateText = state.getText().toString();
         String genderText = "";
-        boolean genderEmpty = false;
+
         //Check to make sure a gender is selected
         if(male.isChecked()) genderText = "Male";
         else if(female.isChecked()) genderText = "Female";
