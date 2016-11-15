@@ -210,9 +210,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
         String starting_point = start.getText().toString();
-        //String ending_point = end.getText().toString();
+        String ending_point = end.getText().toString();
         List<Address> addressList = null;
-        if (starting_point != null || !start.equals(""))
+        if (!starting_point.isEmpty() && !ending_point.isEmpty())
         {
             Geocoder geocoder = new Geocoder(this);
 
