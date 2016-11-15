@@ -32,8 +32,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.User;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener, CreateRideFragment.createRideFragmentListener {
 
@@ -114,6 +118,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 CarpoolOffer offer = dataSnapshot.getValue(CarpoolOffer.class);
+
                 if(offer.getGender().equals("Males") && user.getGender() == "Male"){
                     rideList.add(offer);
                     drawListView();

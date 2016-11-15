@@ -16,7 +16,10 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class CreateRideFragment extends Fragment {
 
@@ -54,6 +57,17 @@ public class CreateRideFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_create_ride, container, false);
+        DateFormat df = new SimpleDateFormat("MM");
+        Date dateobj = new Date();
+        String monS = df.format(dateobj).toString();
+        df = new SimpleDateFormat("dd");
+        String dayS = df.format(dateobj).toString();
+        df = new SimpleDateFormat("hh");
+        String hourS = df.format(dateobj).toString();
+        df = new SimpleDateFormat("mm");
+        String minS = df.format(dateobj).toString();
+        df = new SimpleDateFormat("aa");
+        String ampmS = df.format(dateobj).toString();
         final Button createRide = (Button)v.findViewById(R.id.create_ride_offer_btn);
         final EditText start = (EditText)v.findViewById(R.id.startText);
         final EditText end = (EditText)v.findViewById(R.id.endText);
@@ -66,6 +80,40 @@ public class CreateRideFragment extends Fragment {
         final Spinner hour = (Spinner) v.findViewById(R.id.hours_drop);
         final Spinner min = (Spinner) v.findViewById(R.id.mins_drop);
         final Spinner ampm = (Spinner) v.findViewById(R.id.ampm_drop);
+        mon.setSelection(Integer.parseInt(monS)-1);
+        day.setSelection(Integer.parseInt(dayS)-1);
+        hour.setSelection(Integer.parseInt(hourS)-1);
+        int minI = Integer.parseInt(minS);
+
+        if(ampmS.equals("AM")){
+            ampm.setSelection(0);
+        }
+        else{
+            ampm.setSelection(1);
+        }
+
+        if(minI >= 0 && minI < 15){
+            min.setSelection(1);
+        }
+        else if(minI >= 15 && minI < 30){
+            min.setSelection(2);
+        }
+        else if(minI >= 30 && minI < 45){
+            min.setSelection(3);
+        }
+        else{
+            if((Integer.parseInt(hourS)) == 11 && ampmS.equals("AM") && minI > 45){
+                ampm.setSelection(1);
+            }
+            else if((Integer.parseInt(hourS)) == 11 && ampmS.equals("PM") && minI > 45){
+                ampm.setSelection(0);
+                day.setSelection(Integer.parseInt(dayS));
+            }
+            hour.setSelection(Integer.parseInt(hourS));
+            min.setSelection(0);
+
+        }
+
         createRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
