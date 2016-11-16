@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -29,7 +30,10 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -50,6 +54,7 @@ import com.it326.isucarpool.LoginActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.User;
 
 import java.io.IOException;
@@ -59,7 +64,7 @@ import java.util.List;
 import static com.it326.isucarpool.R.id.map;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, View.OnClickListener, CreateRideFragment.createRideFragmentListener  {
 
     private static User user = null;
     private EditText start;
@@ -67,6 +72,7 @@ public class MainActivity extends AppCompatActivity
     private Button but;
     private GoogleMap map;
     private SupportMapFragment mapFragment;
+    private FirebaseAuth fb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,8 +85,15 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Please provide a starting and ending location.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                CreateRideFragment frag = new CreateRideFragment();
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                transaction.addToBackStack(null);
+                transaction.replace(R.id.map, frag).commit();
+                RelativeLayout list = (RelativeLayout) findViewById(R.id.content_main);
+                list.setVisibility(View.GONE);
+                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                fab.setVisibility(View.GONE);
             }
         });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -107,6 +120,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if(count == 1) {
+            RelativeLayout list = (RelativeLayout) findViewById(R.id.content_main);
+            list.setVisibility(View.VISIBLE);
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.setVisibility(View.VISIBLE);
+        }
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -232,4 +252,32 @@ public class MainActivity extends AppCompatActivity
     public static User getUser(){
         return user;
     }
+
+    @Override
+    public void createRideBtn(String startingPoint, String destination, String description, String gender,
+                              String radius, String departure) {
+        fb = FirebaseAuth.getInstance();
+        CarpoolOffer offer = new CarpoolOffer(fb.getCurrentUser().getUid(), startingPoint, destination, description, gender, radius, departure);
+        FirebaseDatabase.getInstance().getReference("rides").push().setValue(offer, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    System.out.println("Data could not be saved. " + databaseError.getMessage());
+                } else {
+                    //rideList.clear();
+                    //getAllRides();
+                    Toast.makeText(getApplicationContext(), "Data submitted successfully.",
+                            Toast.LENGTH_LONG).show();
+                    if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                        getSupportFragmentManager().popBackStackImmediate();
+                        RelativeLayout list = (RelativeLayout) findViewById(R.id.content_main);
+                        list.setVisibility(View.VISIBLE);
+                        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                        fab.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+    }
+
 }

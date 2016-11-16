@@ -4,7 +4,7 @@
     android:id="@+id/content_rides"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.it326.isucarpool.RidesFragment"
+    tools:context="com.it326.isucarpool.MainActivity"
     android:background="?android:attr/colorBackground"
     android:orientation="vertical">
 

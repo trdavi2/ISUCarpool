@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener, CreateRideFragment.createRideFragmentListener {
+public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener{
 
     private User user = MainActivity.getUser();
     private ArrayList<CarpoolOffer> rideList = new ArrayList<>();
@@ -67,7 +67,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateRideFragment frag = new CreateRideFragment();
+                /*CreateRideFragment frag = new CreateRideFragment();
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 transaction.addToBackStack(null);
@@ -75,30 +75,31 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 ListView list = (ListView) findViewById(R.id.rideslistview);
                 list.setVisibility(View.GONE);
                 FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-                fab.setVisibility(View.GONE);
+                fab.setVisibility(View.GONE);*/
 
             }
         });
         getAllRides();
     }
-
+    ValueEventListener postListener2;
+    DatabaseReference ref2;
     @Override
     public void onBackPressed() {
-        int count = getSupportFragmentManager().getBackStackEntryCount();
+        /*int count = getSupportFragmentManager().getBackStackEntryCount();
         if(count == 1) {
             ListView list = (ListView) findViewById(R.id.rideslistview);
             list.setVisibility(View.VISIBLE);
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.setVisibility(View.VISIBLE);
-        }
+        }*/
         super.onBackPressed();
     }
     public void getAllRides(){
-        rideList.clear();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides");
-        ValueEventListener postListener = new ValueEventListener() {
+        ValueEventListener postListener1 = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                rideList.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     fillRidesList(child.getKey());
                 }
@@ -109,27 +110,27 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         };
-        ref.addValueEventListener(postListener);
+        ref.addValueEventListener(postListener1);
     }
 
     private void fillRidesList(String key) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides").child(key);
-        ValueEventListener postListener = new ValueEventListener() {
+        ref2 = FirebaseDatabase.getInstance().getReference("rides").child(key);
+        postListener2 = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 CarpoolOffer offer = dataSnapshot.getValue(CarpoolOffer.class);
+                if (offer != null) {
 
-                if(offer.getGender().equals("Males") && user.getGender() == "Male"){
-                    rideList.add(offer);
-                    drawListView();
-                }
-                else if(offer.getGender().equals("Females") && user.getGender() == "Female"){
-                    rideList.add(offer);
-                    drawListView();
-                }
-                else if(offer.getGender().equals("Males, Females")) {
-                    rideList.add(offer);
-                    drawListView();
+                    if (offer.getGender().equals("Males") && user.getGender() == "Male") {
+                        rideList.add(offer);
+                        drawListView();
+                    } else if (offer.getGender().equals("Females") && user.getGender() == "Female") {
+                        rideList.add(offer);
+                        drawListView();
+                    } else if (offer.getGender().equals("Males, Females")) {
+                        rideList.add(offer);
+                        drawListView();
+                    }
                 }
             }
 
@@ -138,20 +139,13 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         };
-        ref.addValueEventListener(postListener);
+        ref2.addValueEventListener(postListener2);
     }
 
-    public void drawListView(){
+    public void drawListView() {
         ListView yourListView = (ListView) findViewById(R.id.rideslistview);
         RidesListAdapter customAdapter = new RidesListAdapter(this, R.layout.adapter_rides_listitem, rideList);
         yourListView.setAdapter(customAdapter);
-        Fragment frg = null;
-        frg = getSupportFragmentManager().findFragmentById(R.id.fragment);
-        final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.detach(frg);
-        ft.attach(frg);
-        ft.commit();
     }
 
     @Override
@@ -181,8 +175,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         }
     }
 
-    @Override
-    public void createRideBtn(String startingPoint, String destination, String description, String gender,
+    /*public void createRideBtn(String startingPoint, String destination, String description, String gender,
                               String radius, String departure) {
         fb = FirebaseAuth.getInstance();
         CarpoolOffer offer = new CarpoolOffer(fb.getCurrentUser().getUid(), startingPoint, destination, description, gender, radius, departure);
@@ -206,5 +199,5 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 }
             }
         });
-    }
+    }*/
 }
