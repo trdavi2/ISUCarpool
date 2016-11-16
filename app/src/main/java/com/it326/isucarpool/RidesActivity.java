@@ -39,11 +39,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener{
+public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener {
 
     private User user = MainActivity.getUser();
     private ArrayList<CarpoolOffer> rideList = new ArrayList<>();
-    private FirebaseAuth fb;
+    //private FirebaseAuth fb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,12 +57,12 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         ListView list = (ListView) findViewById(R.id.rideslistview);
         registerForContextMenu(list);
 
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 openContextMenu(view);
             }
-        });
+        });*/
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,8 +81,10 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         });
         getAllRides();
     }
+
     ValueEventListener postListener2;
     DatabaseReference ref2;
+
     @Override
     public void onBackPressed() {
         /*int count = getSupportFragmentManager().getBackStackEntryCount();
@@ -94,7 +96,8 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         }*/
         super.onBackPressed();
     }
-    public void getAllRides(){
+
+    public void getAllRides() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides");
         ValueEventListener postListener1 = new ValueEventListener() {
             @Override
@@ -110,7 +113,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         };
-        ref.addValueEventListener(postListener1);
+        ref.addListenerForSingleValueEvent(postListener1);
     }
 
     private void fillRidesList(String key) {
@@ -139,7 +142,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         };
-        ref2.addValueEventListener(postListener2);
+        ref2.addListenerForSingleValueEvent(postListener2);
     }
 
     public void drawListView() {
@@ -198,6 +201,5 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                     }
                 }
             }
-        });
-    }*/
+        });*/
 }

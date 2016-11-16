@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -53,6 +54,9 @@ public class CreateRideFragment extends Fragment {
         }
     }
 
+    private String strStart;
+    private String strEnd;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,9 +72,13 @@ public class CreateRideFragment extends Fragment {
         String minS = df.format(dateobj).toString();
         df = new SimpleDateFormat("aa");
         String ampmS = df.format(dateobj).toString();
+        strStart = getArguments().getString("start");
+        strEnd = getArguments().getString("end");
         final Button createRide = (Button)v.findViewById(R.id.create_ride_offer_btn);
-        final EditText start = (EditText)v.findViewById(R.id.startText);
-        final EditText end = (EditText)v.findViewById(R.id.endText);
+        final TextView start = (TextView) v.findViewById(R.id.start_loc);
+        start.setText("Starting Location: " + strStart);
+        final TextView end = (TextView) v.findViewById(R.id.end_loc);
+        end.setText("Ending Location: " + strEnd);
         final EditText desc = (EditText)v.findViewById(R.id.ridedescription);
         final CheckBox genM = (CheckBox) v.findViewById(R.id.male_chk);
         final CheckBox genF = (CheckBox) v.findViewById(R.id.female_chk);
@@ -117,8 +125,8 @@ public class CreateRideFragment extends Fragment {
         createRide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startingPoint = start.getText().toString();
-                destination = end.getText().toString();
+                startingPoint = strStart;
+                destination = strEnd;
                 description = desc.getText().toString();
                 if(genM.isChecked() && genF.isChecked()){
                     gender = "Males, Females";

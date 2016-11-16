@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,6 +31,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.GridLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -44,6 +46,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.vision.text.Text;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -85,15 +88,31 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                CreateRideFragment frag = new CreateRideFragment();
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                transaction.addToBackStack(null);
-                transaction.replace(R.id.map, frag).commit();
-                RelativeLayout list = (RelativeLayout) findViewById(R.id.content_main);
-                list.setVisibility(View.GONE);
-                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-                fab.setVisibility(View.GONE);
+
+                if(!start.getText().toString().equals("") && !end.getText().toString().equals("")) {
+                    getSupportActionBar().setTitle("Create Ride Offer");
+                    CreateRideFragment frag = new CreateRideFragment();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    transaction.addToBackStack(null);
+                    EditText s = (EditText) findViewById(R.id.startingLocation);
+                    EditText e = (EditText) findViewById(R.id.endingLocation);
+                    Bundle args = new Bundle();
+                    args.putString("start", s.getText().toString());
+                    args.putString("end", e.getText().toString());
+                    frag.setArguments(args);
+                    transaction.replace(R.id.map, frag).commit();
+                    Button b = (Button) findViewById(R.id.route);
+                    s.setVisibility(View.GONE);
+                    e.setVisibility(View.GONE);
+                    b.setVisibility(View.GONE);
+                    FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+                    fab.setVisibility(View.GONE);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "A starting and ending location need to be defined",
+                            Toast.LENGTH_LONG).show();
+                }
             }
         });
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -118,12 +137,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onResume() {
+        getSupportActionBar().setTitle("Home");
+        super.onResume();
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         int count = getSupportFragmentManager().getBackStackEntryCount();
         if(count == 1) {
-            RelativeLayout list = (RelativeLayout) findViewById(R.id.content_main);
-            list.setVisibility(View.VISIBLE);
+            getSupportActionBar().setTitle("Home");
+            EditText s = (EditText) findViewById(R.id.startingLocation);
+            EditText e = (EditText) findViewById(R.id.endingLocation);
+            Button b = (Button) findViewById(R.id.route);
+            s.setVisibility(View.VISIBLE);
+            e.setVisibility(View.VISIBLE);
+            b.setVisibility(View.VISIBLE);
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.setVisibility(View.VISIBLE);
         }
@@ -266,10 +296,11 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     //rideList.clear();
                     //getAllRides();
-                    Toast.makeText(getApplicationContext(), "Data submitted successfully.",
-                            Toast.LENGTH_LONG).show();
                     if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                         getSupportFragmentManager().popBackStackImmediate();
+                        getSupportActionBar().setTitle("Home");
+                        Toast.makeText(getApplicationContext(), "Data submitted successfully.",
+                                Toast.LENGTH_LONG).show();
                         RelativeLayout list = (RelativeLayout) findViewById(R.id.content_main);
                         list.setVisibility(View.VISIBLE);
                         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
