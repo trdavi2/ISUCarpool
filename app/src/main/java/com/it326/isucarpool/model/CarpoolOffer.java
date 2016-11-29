@@ -6,6 +6,7 @@ package com.it326.isucarpool.model;
 
 public class CarpoolOffer
 {
+    private String rideId;
     private String driverId;
     private String startingPoint;
     private String destination;
@@ -16,6 +17,7 @@ public class CarpoolOffer
 
     public CarpoolOffer()
     {
+        setRideId("");
         setStartingPoint("");
         setDestination("");
         setDriverId("");
@@ -36,6 +38,10 @@ public class CarpoolOffer
         this.radius = radius;
         this.departure = departure;
     }
+
+    public String getRideId() { return rideId; }
+
+    public void setRideId(String rideId) { this.rideId = rideId; }
 
     public String getDriverId() { return driverId; }
 

@@ -5,7 +5,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -41,19 +43,30 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             v = vi.inflate(R.layout.adapter_rides_listitem, null);
         }
 
-        CarpoolOffer p = getItem(position);
+        final CarpoolOffer p = getItem(position);
 
         if (p != null) {
+            TextView id = (TextView) v.findViewById(R.id.ride_id);
             TextView tt1 = (TextView) v.findViewById(R.id.ride_driver);
             TextView tt2 = (TextView) v.findViewById(R.id.ride_departure);
+            TextView tt3 = (TextView) v.findViewById(R.id.ride_dest);
+
+            if(id != null){
+                id.setText(p.getRideId());
+            }
 
             if (tt1 != null) {
                 getDriverInfo(p.getDriverId(), tt1);
             }
 
             if (tt2 != null) {
-                tt2.setText(p.getDescription() + " " + p.getDeparture());
+                tt2.setText("Departure: " + p.getDeparture());
             }
+
+            if (tt3 != null) {
+                tt3.setText("Destination: " + p.getDestination());
+            }
+
         }
 
         return v;
@@ -68,6 +81,7 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                 driver = user.getFirstName() + " " + user.getLastName();
                 tv.setText(driver);
             }
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

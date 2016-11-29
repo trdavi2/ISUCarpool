@@ -127,8 +127,6 @@ public class MainActivity extends AppCompatActivity
         mapFragment = new SupportMapFragment();
         mapFragment.getMapAsync(this);
         getSupportFragmentManager().beginTransaction().replace(R.id.map, mapFragment).commit();
-        start = (EditText) findViewById(R.id.startingLocation);
-        end = (EditText) findViewById(R.id.endingLocation);
         //Buttons
         start = (EditText) findViewById(R.id.startingLocation);
         end = (EditText) findViewById(R.id.endingLocation);

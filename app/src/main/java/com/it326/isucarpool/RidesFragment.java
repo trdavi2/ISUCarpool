@@ -33,6 +33,13 @@ public class RidesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_rides, container, false);
+        ListView list = (ListView) v.findViewById(R.id.rideslistview);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                listItemClicked(view);
+            }
+        });
         return inflater.inflate(R.layout.fragment_rides, container, false);
     }
 

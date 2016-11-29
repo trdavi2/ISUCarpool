@@ -20,7 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -39,11 +41,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener {
+public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener, RideInfoFragment.rideInfoFragmentListener {
 
     private User user = MainActivity.getUser();
     private ArrayList<CarpoolOffer> rideList = new ArrayList<>();
     //private FirebaseAuth fb;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,31 +57,26 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         RidesFragment fragment = new RidesFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fragment, fragment);
-        ListView list = (ListView) findViewById(R.id.rideslistview);
-        registerForContextMenu(list);
-
-        /*list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        final ListView list = (ListView) findViewById(R.id.rideslistview);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                openContextMenu(view);
-            }
-        });*/
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                /*CreateRideFragment frag = new CreateRideFragment();
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                RideInfoFragment frag = new RideInfoFragment();
+                TextView id = (TextView) view.findViewById(R.id.ride_id);
+                String idString = id.getText().toString();
+                Bundle args = new Bundle();
+                args.putString("rideId", idString);
+                frag.setArguments(args);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 transaction.addToBackStack(null);
-                transaction.replace(R.id.fragment, frag).commit();
-                ListView list = (ListView) findViewById(R.id.rideslistview);
                 list.setVisibility(View.GONE);
-                FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-                fab.setVisibility(View.GONE);*/
+                transaction.replace(R.id.fragment, frag).commit();
 
             }
         });
+        registerForContextMenu(list);
+
         getAllRides();
     }
 
@@ -87,6 +85,11 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
 
     @Override
     public void onBackPressed() {
+        ListView list = (ListView) findViewById(R.id.rideslistview);
+
+        if(list.getVisibility() != View.VISIBLE){
+            list.setVisibility(View.VISIBLE);
+        }
         /*int count = getSupportFragmentManager().getBackStackEntryCount();
         if(count == 1) {
             ListView list = (ListView) findViewById(R.id.rideslistview);
@@ -116,12 +119,13 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         ref.addListenerForSingleValueEvent(postListener1);
     }
 
-    private void fillRidesList(String key) {
+    private void fillRidesList(final String key) {
         ref2 = FirebaseDatabase.getInstance().getReference("rides").child(key);
         postListener2 = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 CarpoolOffer offer = dataSnapshot.getValue(CarpoolOffer.class);
+                offer.setRideId(key);
                 if (offer != null) {
 
                     if (offer.getGender().equals("Males") && user.getGender() == "Male") {
@@ -176,6 +180,16 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    @Override
+    public void requestRide() {
+        System.out.println("YOU ARE TRYING TO REQUEST A RIDE");
+    }
+
+    @Override
+    public void sendChat() {
+        System.out.println("YOU ARE TRYING TO SEND A CHAT");
     }
 
     /*public void createRideBtn(String startingPoint, String destination, String description, String gender,
