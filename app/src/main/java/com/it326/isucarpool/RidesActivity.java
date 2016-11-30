@@ -45,7 +45,6 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
 
     private User user = MainActivity.getUser();
     private ArrayList<CarpoolOffer> rideList = new ArrayList<>();
-    //private FirebaseAuth fb;
 
 
     @Override
@@ -90,13 +89,6 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         if(list.getVisibility() != View.VISIBLE){
             list.setVisibility(View.VISIBLE);
         }
-        /*int count = getSupportFragmentManager().getBackStackEntryCount();
-        if(count == 1) {
-            ListView list = (ListView) findViewById(R.id.rideslistview);
-            list.setVisibility(View.VISIBLE);
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setVisibility(View.VISIBLE);
-        }*/
         super.onBackPressed();
     }
 
@@ -191,29 +183,4 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
     public void sendChat() {
         System.out.println("YOU ARE TRYING TO SEND A CHAT");
     }
-
-    /*public void createRideBtn(String startingPoint, String destination, String description, String gender,
-                              String radius, String departure) {
-        fb = FirebaseAuth.getInstance();
-        CarpoolOffer offer = new CarpoolOffer(fb.getCurrentUser().getUid(), startingPoint, destination, description, gender, radius, departure);
-        FirebaseDatabase.getInstance().getReference("rides").push().setValue(offer, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError != null) {
-                    System.out.println("Data could not be saved. " + databaseError.getMessage());
-                } else {
-                    rideList.clear();
-                    getAllRides();
-                    Toast.makeText(getApplicationContext(), "Data submitted successfully.",
-                            Toast.LENGTH_LONG).show();
-                    if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                        getSupportFragmentManager().popBackStackImmediate();
-                        ListView list = (ListView) findViewById(R.id.rideslistview);
-                        list.setVisibility(View.VISIBLE);
-                        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-                        fab.setVisibility(View.VISIBLE);
-                    }
-                }
-            }
-        });*/
 }
