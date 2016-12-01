@@ -6,6 +6,9 @@
             android:id="@+id/nav_rides"
             android:title="@string/rides" />
         <item
+            android:id="@+id/nav_prev"
+            android:title="@string/previous_rides_offers" />
+        <item
             android:id="@+id/nav_chats"
             android:title="@string/chats" />
     </group>

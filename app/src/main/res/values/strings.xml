@@ -135,6 +135,9 @@
         <item>25 Miles</item>
         <item>50 Miles</item>
     </string-array>
+    <string name="title_activity_view_previous_rides_offers">ViewPreviousRidesOffersActivity
+    </string>
+    <string name="previous_rides_offers">Previous Rides/Offers</string>
 
 
 </resources>

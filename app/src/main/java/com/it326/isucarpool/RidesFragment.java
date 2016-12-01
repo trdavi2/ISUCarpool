@@ -1,5 +1,6 @@
 package com.it326.isucarpool;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.text.Editable;
@@ -11,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -23,8 +25,9 @@ public class RidesFragment extends Fragment {
 
     interface ridesListener {
         boolean listItemClicked(View view);
+        void searchDestinations(String destination);
     }
-
+    String destination = "";
     ridesListener listener;
     public RidesFragment() {
     }
@@ -33,6 +36,15 @@ public class RidesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_rides, container, false);
+        Button search = (Button) v.findViewById(R.id.search_btn);
+        final EditText searchTxt = (EditText) v.findViewById(R.id.search_destinations);
+        search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                destination = searchTxt.getText().toString();
+                searchDestinations(view);
+            }
+        });
         ListView list = (ListView) v.findViewById(R.id.rideslistview);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -40,13 +52,28 @@ public class RidesFragment extends Fragment {
                 listItemClicked(view);
             }
         });
-        return inflater.inflate(R.layout.fragment_rides, container, false);
+        return v;
     }
 
+    public void searchDestinations(View view){
+        if(listener != null){
+            listener.searchDestinations(destination);
+        }
+    }
 
     public void listItemClicked(View view) {
         if(listener != null){
             listener.listItemClicked(view);
+        }
+    }
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof RidesFragment.ridesListener) {
+            listener = (RidesFragment.ridesListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
     }
 }
