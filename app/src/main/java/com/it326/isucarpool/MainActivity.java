@@ -254,23 +254,29 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
+        map.clear();
         String starting_point = start.getText().toString();
         String ending_point = end.getText().toString();
-        List<Address> addressList = null;
+        List<Address> startAddressList = null;
+        List<Address> endAddressList = null;
         if (!starting_point.isEmpty() && !ending_point.isEmpty())
         {
             Geocoder geocoder = new Geocoder(this);
 
             try {
-                addressList = geocoder.getFromLocationName(starting_point, 1);
+                startAddressList = geocoder.getFromLocationName(starting_point, 1);
+                endAddressList = geocoder.getFromLocationName(ending_point, 1);
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            Address address = addressList.get(0);
-            LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-            map.addMarker(new MarkerOptions().position(latLng).title(starting_point));
-            map.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            Address saddress = startAddressList.get(0);
+            Address eaddress = endAddressList.get(0);
+            LatLng slatLng = new LatLng(saddress.getLatitude(), saddress.getLongitude());
+            LatLng elatlng = new LatLng(eaddress.getLatitude(), eaddress.getLongitude());
+            map.addMarker(new MarkerOptions().position(slatLng).title(starting_point));
+            map.addMarker(new MarkerOptions().position(elatlng).title(ending_point));
+            map.animateCamera(CameraUpdateFactory.newLatLng(slatLng));
         }
     }
 
