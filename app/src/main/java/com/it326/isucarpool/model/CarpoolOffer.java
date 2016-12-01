@@ -8,6 +8,7 @@ public class CarpoolOffer
 {
     private String rideId;
     private String driverId;
+    private String riderId;
     private String startingPoint;
     private String destination;
     private String description;
@@ -18,6 +19,7 @@ public class CarpoolOffer
     public CarpoolOffer()
     {
         setRideId("");
+        setRiderId("");
         setStartingPoint("");
         setDestination("");
         setDriverId("");
@@ -42,6 +44,10 @@ public class CarpoolOffer
     public String getRideId() { return rideId; }
 
     public void setRideId(String rideId) { this.rideId = rideId; }
+
+    public String getRiderId() { return riderId; }
+
+    public void setRiderId(String riderId) { this.riderId = riderId; }
 
     public String getDriverId() { return driverId; }
 

@@ -164,19 +164,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -194,9 +189,13 @@ public class MainActivity extends AppCompatActivity
             intent = new Intent(this, RidesActivity.class);
             startActivity(intent);
 
-        } else if (id == R.id.nav_chats) {
-            intent = new Intent(this, ChatsActivity.class);
+        } else if (id == R.id.nav_prev) {
+            intent = new Intent(this, ViewPreviousRidesOffersActivity.class);
             startActivity(intent);
+
+        } else if (id == R.id.nav_chats) {
+            //intent = new Intent(this, ChatsActivity.class);
+            //startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
             intent = new Intent(this, UserProfileActivity.class);
@@ -225,8 +224,6 @@ public class MainActivity extends AppCompatActivity
                 user = dataSnapshot.getValue(User.class);
                 TextView txtName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.name);
                 TextView txtEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email);
-                //txtName.setText(user.getFirstName() + " " + user.getLastName());
-                //txtEmail.setText(user.getEmail());
             }
 
             @Override
