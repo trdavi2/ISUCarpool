@@ -47,12 +47,18 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
 
         if (p != null) {
             TextView id = (TextView) v.findViewById(R.id.ride_id);
+            TextView did = (TextView) v.findViewById(R.id.driver_id);
+
             TextView tt1 = (TextView) v.findViewById(R.id.ride_driver);
             TextView tt2 = (TextView) v.findViewById(R.id.ride_departure);
             TextView tt3 = (TextView) v.findViewById(R.id.ride_dest);
 
             if(id != null){
                 id.setText(p.getRideId());
+            }
+
+            if(did != null){
+                did.setText(p.getDriverId());
             }
 
             if (tt1 != null) {

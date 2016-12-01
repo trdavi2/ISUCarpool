@@ -43,6 +43,7 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
     ValueEventListener postListener2;
 
     int listToShow = 0;
+    String selectUserId = "";
     String selectRideId = "";
     private FirebaseAuth fb;
 
@@ -61,7 +62,9 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 openContextMenu(view);
+                TextView uid = (TextView) view.findViewById(R.id.user_id);
                 TextView id = (TextView) view.findViewById(R.id.ride_id);
+                selectUserId = uid.getText().toString();
                 selectRideId = id.getText().toString();
             }
         });
@@ -176,23 +179,23 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
     public boolean onContextItemSelected(MenuItem item) {
         if(item.getTitle()=="Rate: 1"){
             Toast.makeText(getApplicationContext(),"Rated Driver 1",Toast.LENGTH_LONG).show();
-            createRating(1, selectRideId);
+            createRating(1, selectUserId, selectRideId);
         }
         else if(item.getTitle()=="Rate: 2"){
             Toast.makeText(getApplicationContext(),"Rated Driver 2",Toast.LENGTH_LONG).show();
-            createRating(2, selectRideId);
+            createRating(2, selectUserId, selectRideId);
         }
         else if(item.getTitle()=="Rate: 3"){
             Toast.makeText(getApplicationContext(),"Rated Driver 3",Toast.LENGTH_LONG).show();
-            createRating(3, selectRideId);
+            createRating(3, selectUserId, selectRideId);
         }
         else if(item.getTitle()=="Rate: 4"){
             Toast.makeText(getApplicationContext(),"Rated Driver 4",Toast.LENGTH_LONG).show();
-            createRating(4, selectRideId);
+            createRating(4, selectUserId, selectRideId);
         }
         else if(item.getTitle()=="Rate: 5"){
             Toast.makeText(getApplicationContext(),"Rated Driver 5",Toast.LENGTH_LONG).show();
-            createRating(5, selectRideId);
+            createRating(5, selectUserId, selectRideId);
         }
         else{
             return false;
@@ -217,14 +220,14 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
         getAllRides();
     }
 
-    public void createRating(int rating, String id) {
+    public void createRating(int rating, String id, String rideId) {
         fb = FirebaseAuth.getInstance();
         Rating rate = null;
         if(listToShow == 0){
-            rate = new Rating(FirebaseAuth.getInstance().getCurrentUser().getUid(), id, String.valueOf(rating));
+            rate = new Rating(FirebaseAuth.getInstance().getCurrentUser().getUid(), id, String.valueOf(rating), rideId);
         }
         else{
-            rate = new Rating(id, FirebaseAuth.getInstance().getCurrentUser().getUid(), String.valueOf(rating));
+            rate = new Rating(id, FirebaseAuth.getInstance().getCurrentUser().getUid(), String.valueOf(rating), rideId);
         }
         final String[] genId = {""};
         FirebaseDatabase.getInstance().getReference("ratings").push().setValue(rate, new DatabaseReference.CompletionListener() {
