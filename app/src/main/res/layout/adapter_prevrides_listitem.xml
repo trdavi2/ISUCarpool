@@ -10,6 +10,11 @@
         android:visibility="gone"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content" />
+    <TextView
+        android:id="@+id/user_id"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
     <ImageView
         android:id="@+id/imageView1"
         android:layout_width="wrap_content"
@@ -32,18 +37,26 @@
                 android:textSize="18sp" />
         </TableRow>
         <TableRow>
-            <TextView
-                android:id="@+id/ride_departure"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="3dp" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                    android:id="@+id/ride_dest"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/current_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="3dp" />
+                    android:gravity="left"
+                    android:textSize="16sp"
+                    android:paddingRight="10dp"/>
+
+                <TextView
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:text="Rate Your Driver!"
+                    android:textSize="16sp" />
+            </LinearLayout>
         </TableRow>
     </TableLayout>
 </LinearLayout>
