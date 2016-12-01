@@ -24,6 +24,7 @@ import java.util.Calendar;
 public class ViewPreviousRidesOffersActivityFragment extends Fragment {
 
     interface previousRidesListener {
+        void toggleList();
     }
     String destination = "";
     previousRidesListener listener;
@@ -34,6 +35,13 @@ public class ViewPreviousRidesOffersActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_view_previous_rides_offers, container, false);
+        Button toggle = (Button) v.findViewById(R.id.toggle_btn);
+        toggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleList(view);
+            }
+        });
         ListView list = (ListView) v.findViewById(R.id.prevrideslistview);
 
         return v;
@@ -47,6 +55,12 @@ public class ViewPreviousRidesOffersActivityFragment extends Fragment {
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    void toggleList(View view) {
+        if (listener != null) {
+            listener.toggleList();
         }
     }
 }

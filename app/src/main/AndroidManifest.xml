@@ -6,7 +6,6 @@
         android:glEsVersion="0x00020000"
         android:required="true" />
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -61,6 +60,10 @@
             android:label="@string/title_activity_rides"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
+            <uses-library
+                android:name="com.google.android.maps"
+                android:required="true" />
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.it326.isucarpool.MainActivity" />
@@ -87,6 +90,15 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyAmNwkU1GoDFf8CJqQrz2GrzXjm7TBKwfc" />
 
+        <activity
+            android:name=".ViewPreviousRidesOffersActivity"
+            android:label="Previous Rides and Offers"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.it326.isucarpool.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

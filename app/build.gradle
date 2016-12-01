@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "com.it326.isucarpool"
-        minSdkVersion 16
+        minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -21,7 +21,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.4.0'
     compile 'com.google.firebase:firebase-core:10.0.0'
@@ -29,12 +29,12 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:10.0.0'
     compile 'com.google.firebase:firebase-database:10.0.0'
     compile 'com.google.firebase:firebase-messaging:10.0.0'
-    compile 'com.firebaseui:firebase-ui-database:0.6.0'
-    compile 'com.firebaseui:firebase-ui-auth:0.6.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.android.support:support-vector-drawable:23.4.0'
     compile 'com.google.android.gms:play-services:10.0.0'
 }
+
+
 
 
 apply plugin: 'com.google.gms.google-services'
