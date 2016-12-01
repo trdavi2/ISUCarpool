@@ -190,12 +190,12 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
 
         } else if (id == R.id.nav_prev) {
-            intent = new Intent(this, ViewPreviousRidesOffersActivity.class);
-            startActivity(intent);
+            //intent = new Intent(this, ViewPreviousRidesOffersActivity.class);
+            //startActivity(intent);
 
         } else if (id == R.id.nav_chats) {
-            //intent = new Intent(this, ChatsActivity.class);
-            //startActivity(intent);
+            intent = new Intent(this, ChatsActivity.class);
+            startActivity(intent);
 
         } else if (id == R.id.nav_profile) {
             intent = new Intent(this, UserProfileActivity.class);

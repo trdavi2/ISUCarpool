@@ -11,10 +11,10 @@ public class Chat
     private ArrayList<String> messages;
     private String id;
 
-    public Chat() {
-        //this.messages = new ArrayList<String>();
-        //messages.add("TEST");
-        setId("1233445");
+    public Chat(String input, String username) {
+        this.messages = new ArrayList<String>();
+        messages.add(input);
+        id = username;
     }
 
 

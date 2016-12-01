@@ -40,6 +40,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ChatsActivity"
+            android:label="Chat"
+            android:theme="@style/AppTheme"/>
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"
@@ -64,15 +68,6 @@
         <activity
             android:name=".UserProfileActivity"
             android:label="@string/title_activity_user_profile"
-            android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.it326.isucarpool.MainActivity" />
-        </activity>
-        <activity
-            android:name=".ChatsActivity"
-            android:label="@string/title_activity_chats"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data
