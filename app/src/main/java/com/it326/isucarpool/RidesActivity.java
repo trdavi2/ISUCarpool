@@ -79,6 +79,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 RideInfoFragment frag = new RideInfoFragment();
                 TextView id = (TextView) findViewById(R.id.ride_id);
+                TextView did = (TextView) findViewById(R.id.driver_id);
                 EditText s = (EditText) findViewById(R.id.search_destinations);
                 Button b = (Button) findViewById(R.id.search_btn);
                 String idString = id.getText().toString();

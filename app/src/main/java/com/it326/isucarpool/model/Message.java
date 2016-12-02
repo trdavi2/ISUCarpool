@@ -15,6 +15,9 @@ public class Message
         this.setMessageUser(messageUser);
     }
 
+    public Message()
+    {
+    }
 
     public String getMessageText() { return messageText; }
 

@@ -8,29 +8,44 @@ import java.util.ArrayList;
 
 public class Chat
 {
-    private ArrayList<String> messages;
-    private String id;
+    private ArrayList<Message> messages;
+    private String riderId;
+    private String driverId;
 
-    public Chat(String input, String username) {
-        this.messages = new ArrayList<String>();
-        messages.add(input);
-        id = username;
+    public Chat()
+    {
+    }
+
+    public Chat(String input, String sriderId) {
+        this.setMessages(new ArrayList<Message>());
+        getMessages().add(new Message(input, sriderId));
+        riderId = sriderId;
+        setDriverId("");
     }
 
 
-    public String getId() {
-        return id;
+    public String getRiderId() {
+        return riderId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setRiderId(String id) {
+        this.riderId = id;
     }
 
-    public ArrayList<String> getMessages() {
+
+    public ArrayList<Message> getMessages() {
         return messages;
     }
 
-    public void setMessages(ArrayList<String> messages) {
+    public void setMessages(ArrayList<Message> messages) {
         this.messages = messages;
+    }
+
+    public String getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(String driverId) {
+        this.driverId = driverId;
     }
 }

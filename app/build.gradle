@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.it326.isucarpool"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
@@ -29,6 +29,8 @@ dependencies {
     compile 'com.google.firebase:firebase-storage:10.0.0'
     compile 'com.google.firebase:firebase-database:10.0.0'
     compile 'com.google.firebase:firebase-messaging:10.0.0'
+    compile 'com.firebaseui:firebase-ui-auth:0.6.0'
+    compile 'com.firebaseui:firebase-ui-database:0.6.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.android.support:support-vector-drawable:23.4.0'
     compile 'com.google.android.gms:play-services:10.0.0'
