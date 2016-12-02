@@ -182,7 +182,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 cursor.close();
                 profilePicture = (ImageView) findViewById(R.id.profile_picture);
                 Bitmap b = BitmapFactory.decodeFile(imgDecodableString);
-                b = ThumbnailUtils.extractThumbnail(b, 144, 144);
+                //b = ThumbnailUtils.extractThumbnail(b, 144, 144);
                 profilePicture.setImageBitmap(b);
 
             }
@@ -275,7 +275,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 byte[] bytes = baos.toByteArray();
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com/");
-                StorageReference locRef = storageRef.child("profile_pictures/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + ".png");
+                StorageReference locRef = storageRef.child("profile_pictures/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + ".jpeg");
                 UploadTask uploadTask = locRef.putBytes(bytes);
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override

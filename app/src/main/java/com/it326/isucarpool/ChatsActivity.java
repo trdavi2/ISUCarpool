@@ -3,6 +3,8 @@ package com.it326.isucarpool;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.support.v4.app.FragmentTransaction;
 
 import com.google.android.gms.fitness.data.Value;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,7 +38,7 @@ import java.util.Date;
  * Created by Cedomir Spalevic on 11/30/2016.
  */
 
-public class ChatsActivity extends Activity
+public class ChatsActivity extends AppCompatActivity implements MessageFragment.MessageFragmentListener
 {
     private DatabaseReference chats;
     private FirebaseUser user;
@@ -50,6 +53,11 @@ public class ChatsActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chats);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ChatFragment fragment = new ChatFragment();
+        getFragmentManager().beginTransaction().add(R.id.fragment_chat, fragment);
         //Set up Firebase
         chats = FirebaseDatabase.getInstance().getReference("chats");
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -63,16 +71,15 @@ public class ChatsActivity extends Activity
         chatId = new ArrayList<String>();
         getAllChats();
         //drawListView();
-        final ListView list = (ListView) findViewById(R.id.list_of_messages);
+        final ListView list = (ListView) findViewById(R.id.list_of_chats);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            openContextMenu(view);
-            ChatFragment chatFragment = new ChatFragment();
+            MessageFragment messageFragment = new MessageFragment();
             Bundle args = new Bundle();
             args.putString("chatId", chatId.get(i));
-            chatFragment.setArguments(args);
-            getFragmentManager().beginTransaction().add(R.id.fragment_chat, chatFragment).commit();
+            messageFragment.setArguments(args);
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_chat, messageFragment).commit();
         }
     });
     }
@@ -102,7 +109,7 @@ public class ChatsActivity extends Activity
     }
 
     public void drawListView() {
-        ListView yourListView = (ListView) findViewById(R.id.list_of_messages);
+        ListView yourListView = (ListView) findViewById(R.id.list_of_chats);
         ChatListAdapter customAdapter = new ChatListAdapter(this, R.layout.chat, chatList, chatId);
         yourListView.setAdapter(customAdapter);
     }
