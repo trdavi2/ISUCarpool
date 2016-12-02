@@ -5,17 +5,22 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -32,6 +37,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -46,6 +52,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.vision.text.Text;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -53,6 +61,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.it326.isucarpool.LoginActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -65,6 +75,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.it326.isucarpool.R.id.map;
+import static com.it326.isucarpool.R.id.profile_picture;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, View.OnClickListener, CreateRideFragment.createRideFragmentListener  {
@@ -76,6 +87,7 @@ public class MainActivity extends AppCompatActivity
     private GoogleMap map;
     private SupportMapFragment mapFragment;
     private FirebaseAuth fb;
+    private static Bitmap profilePic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +144,27 @@ public class MainActivity extends AppCompatActivity
         end = (EditText) findViewById(R.id.endingLocation);
         but = (Button) findViewById(R.id.route);
         but.setOnClickListener(this);
+        loadProfilePicture();
+    }
+
+    public void loadProfilePicture(){
+        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com/");
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageRef.child("profile_pictures/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + ".png").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    if(bytes != null) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        profilePic = bitmap;
+                    }
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
     }
 
     @Override
@@ -222,8 +255,15 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
+                ImageView img = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_pic);
+                if(profilePic != null) {
+                    img.setImageBitmap(profilePic);
+                }
                 TextView txtName = (TextView) navigationView.getHeaderView(0).findViewById(R.id.name);
+                txtName.setText(user.getFirstName() + " " + user.getLastName());
                 TextView txtEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email);
+                txtEmail.setText(user.getEmail());
+
             }
 
             @Override
@@ -283,6 +323,10 @@ public class MainActivity extends AppCompatActivity
     public static User getUser(){
         return user;
     }
+    public static Bitmap getProfilePic(){
+        return profilePic;
+    }
+
 
     @Override
     public void createRideBtn(String startingPoint, String destination, String description, String gender,

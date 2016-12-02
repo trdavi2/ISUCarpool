@@ -17,6 +17,7 @@ public class UserProfileFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_user_profile, container, false);
         return inflater.inflate(R.layout.fragment_user_profile, container, false);
     }
 }

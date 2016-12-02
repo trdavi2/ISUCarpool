@@ -15,9 +15,13 @@ public class CarpoolOffer
     private String gender;
     private String radius;
     private String departure;
+    private boolean driverRating;
+    private boolean riderRating;
 
     public CarpoolOffer()
     {
+        setRiderRating(false);
+        setDriverRating(false);
         setRideId("");
         setRiderId("");
         setStartingPoint("");
@@ -40,6 +44,14 @@ public class CarpoolOffer
         this.radius = radius;
         this.departure = departure;
     }
+
+    public boolean getDriverRating() { return driverRating; }
+
+    public void setDriverRating(boolean driverRating) { this.driverRating = driverRating; }
+
+    public boolean getRiderRating() { return riderRating; }
+
+    public void setRiderRating(boolean riderRating) { this.riderRating = riderRating; }
 
     public String getRideId() { return rideId; }
 

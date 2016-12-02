@@ -25,6 +25,8 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
     private String driver = "";
     private int offerOrRide = 0;
     private List<Double> ratingList = new ArrayList<>();
+    private List<String> yourRatings = new ArrayList<>();
+
 
     public PrevRidesListAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
@@ -53,7 +55,7 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             TextView id = (TextView) v.findViewById(R.id.ride_id);
             TextView user = (TextView) v.findViewById(R.id.user_id);
             TextView tt1 = (TextView) v.findViewById(R.id.ride_driver);
-            TextView tt2 = (TextView) v.findViewById(R.id.rating);
+            TextView tt2 = (TextView) v.findViewById(R.id.date_dept);
             TextView tt3 = (TextView) v.findViewById(R.id.current_rating);
 
 
@@ -80,12 +82,7 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             }
 
             if (tt2 != null) {
-                if(offerOrRide == 0){
-                    tt2.setText("Rate Your Rider!");
-                }
-                else{
-                    tt2.setText("Rate Your Driver!");
-                }
+                tt2.setText("Departure: " + p.getDeparture());
             }
 
             if (tt3 != null) {
@@ -107,12 +104,7 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 driver = user.getFirstName() + " " + user.getLastName();
-                if(offerOrRide == 0) {
-                    tv.setText("Rider: " + driver);
-                }
-                else{
-                    tv.setText("Driver: " + driver);
-                }
+                tv.setText(driver);
             }
 
 
