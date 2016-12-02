@@ -275,7 +275,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 byte[] bytes = baos.toByteArray();
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference storageRef = storage.getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com/");
-                StorageReference locRef = storageRef.child("profile_pictures/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + ".png");
+                StorageReference locRef = storageRef.child("profile_pictures/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + ".jpeg");
                 UploadTask uploadTask = locRef.putBytes(bytes);
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -285,16 +285,18 @@ public class UserProfileActivity extends AppCompatActivity {
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                        System.out.println("FILE UPLOADED");
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     }
                 });
             }
 
             // we finally have our base64 string version of the image, save it.
             fb = FirebaseAuth.getInstance();
-            FirebaseDatabase.getInstance().getReference("users").child(fb.getCurrentUser().getUid()).child("profile").setValue(user);
+            FirebaseDatabase.getInstance().getReference("users").child(fb.getCurrentUser().getUid()).child("profile").setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Toast.makeText(UserProfileActivity.this, "Update Successful!", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

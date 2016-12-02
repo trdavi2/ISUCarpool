@@ -1,8 +1,11 @@
 package com.it326.isucarpool;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
@@ -10,13 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.User;
 
@@ -55,6 +63,7 @@ public class RideInfoFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_ride_info, container, false);
         rideId = getArguments().getString("rideId");
         getRideData(rideId, v);
+        loadProfilePicture(getArguments().getString("userId"), v);
         Button request = (Button) v.findViewById(R.id.request_ride);
         final Button sendChat = (Button) v.findViewById(R.id.send_chat);
 
@@ -88,6 +97,26 @@ public class RideInfoFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    public void loadProfilePicture(String key, final View v){
+        StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com/");
+        final long ONE_MEGABYTE = 1024 * 1024;
+        storageRef.child("profile_pictures/" + key + ".jpeg").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                if(bytes != null) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    ImageView pic = (ImageView) v.findViewById(R.id.imageView1);
+                    Bitmap resizedbitmap = Bitmap.createScaledBitmap(bitmap, 225, 225, true);
+                    pic.setImageBitmap(resizedbitmap);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+            }
+        });
     }
 
     public void getRideData(String key, final View v){

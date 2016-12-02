@@ -7,6 +7,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
@@ -56,6 +57,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener, RideInfoFragment.rideInfoFragmentListener {
 
@@ -79,11 +82,15 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 RideInfoFragment frag = new RideInfoFragment();
                 TextView id = (TextView) findViewById(R.id.ride_id);
+                TextView did = (TextView) findViewById(R.id.driver_id);
+
                 EditText s = (EditText) findViewById(R.id.search_destinations);
                 Button b = (Button) findViewById(R.id.search_btn);
                 String idString = id.getText().toString();
+                String didString = did.getText().toString();
                 Bundle args = new Bundle();
                 args.putString("rideId", idString);
+                args.putString("userId", didString);
                 frag.setArguments(args);
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -164,7 +171,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    if(convertedDate.after(current)) {
+                    if (convertedDate.after(current)) {
                         if ((start < rad || dest < rad) && search.equals("")) {
                             if (offer.getGender().equals("Males") && user.getGender() == "Male") {
                                 rideList.add(offer);
@@ -227,11 +234,10 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         System.out.println("YOU ARE TRYING TO SEND A CHAT");
     }
 
-    public double CalculationByDistance(String loc){
-        Geocoder geocoder;
+    public double CalculationByDistance(final String loc) {
+        final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         List<android.location.Address> addresses = null;
         List<android.location.Address> myaddresses = null;
-        geocoder = new Geocoder(this, Locale.getDefault());
         android.location.Address address = null;
         android.location.Address myaddress = null;
 
@@ -239,6 +245,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         try {
             myaddresses = geocoder.getFromLocationName(user.getAddress() + " " + user.getCity() + ", " + user.getState(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
             addresses = geocoder.getFromLocationName(loc, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+
             if (addresses != null && addresses.size() > 0) {
                 address = addresses.get(0);
             }
@@ -246,42 +253,29 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
             if (myaddresses != null && myaddresses.size() > 0) {
                 myaddress = myaddresses.get(0);
             }
-            //LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            //String provider = service.getBestProvider(criteria, false);
-            if(address != null) {
-
-                //if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                //}
-
-                //Location location = service.getLastKnownLocation(provider);
-                //LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                System.out.println("Time Start");
-                int Radius = 6371;// radius of earth in Km
-                double lat1 = myaddress.getLatitude();
-                double lat2 = address.getLatitude();
-                double lon1 = myaddress.getLongitude();
-                double lon2 = address.getLongitude();
-                double dLat = Math.toRadians(lat2 - lat1);
-                double dLon = Math.toRadians(lon2 - lon1);
-                double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                        + Math.cos(Math.toRadians(lat1))
-                        * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
-                        * Math.sin(dLon / 2);
-                double c = 2 * Math.asin(Math.sqrt(a));
-                valueResult = Radius * c;
-                double km = valueResult / 1;
-                DecimalFormat newFormat = new DecimalFormat("####");
-                int kmInDec = Integer.valueOf(newFormat.format(km));
-                double meter = valueResult % 1000;
-                int meterInDec = Integer.valueOf(newFormat.format(meter));
-                System.out.println("Time End");
+            if (address != null) {
+                valueResult = distance(myaddress.getLatitude(), address.getLatitude(), myaddress.getLongitude(), address.getLongitude());
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return valueResult * 1.60934;
+        return valueResult * 0.000621371;
     }
+    public static double distance(double lat1, double lat2, double lon1,
+                                  double lon2) {
 
+        final int R = 6371; // Radius of the earth
+
+        Double latDistance = Math.toRadians(lat2 - lat1);
+        Double lonDistance = Math.toRadians(lon2 - lon1);
+        Double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        Double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+        distance = Math.pow(distance, 2);
+
+        return Math.sqrt(distance);
+    }
 }

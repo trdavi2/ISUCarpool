@@ -45,7 +45,6 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
 
     int listToShow = 0;
     String selectUserId = "";
-    String selectRideId = "";
     private FirebaseAuth fb;
 
     @Override
@@ -64,9 +63,7 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 openContextMenu(view);
                 TextView uid = (TextView) view.findViewById(R.id.user_id);
-                TextView id = (TextView) view.findViewById(R.id.ride_id);
                 selectUserId = uid.getText().toString();
-                selectRideId = id.getText().toString();
             }
         });
         registerForContextMenu(list);

@@ -42,10 +42,7 @@ public class Rating {
         this.riderId = riderId;
     }
 
-    public String getRating()
-    {
-        return rating;
-    }
+    public String getRating() { return rating; }
 
     public void setRating(String rating)
     {
