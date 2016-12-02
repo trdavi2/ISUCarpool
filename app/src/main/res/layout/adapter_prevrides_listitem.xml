@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:paddingLeft="0dp"
         android:paddingRight="10dp"
-        android:paddingBottom="1dp"
+        android:paddingBottom="5dp"
         android:src="@mipmap/ic_launcher" />
 
     <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -35,12 +35,17 @@
                 android:layout_height="wrap_content"
                 android:gravity="left"
                 android:textSize="18sp" />
+
         </TableRow>
         <TableRow>
-            <LinearLayout
+            <TextView
+                android:id="@+id/date_dept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:gravity="left"
+                android:textSize="16sp" />
+        </TableRow>
+        <TableRow>
                 <TextView
                     android:id="@+id/current_rating"
                     android:layout_width="wrap_content"
@@ -48,15 +53,6 @@
                     android:gravity="left"
                     android:textSize="16sp"
                     android:paddingRight="10dp"/>
-
-                <TextView
-                    android:id="@+id/rating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:text="Rate Your Driver!"
-                    android:textSize="16sp" />
-            </LinearLayout>
         </TableRow>
     </TableLayout>
 </LinearLayout>

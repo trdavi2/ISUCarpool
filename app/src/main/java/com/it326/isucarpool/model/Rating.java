@@ -8,31 +8,18 @@ public class Rating {
 
     private String driverId;
     private String riderId;
-    private String rideId;
     private String rating;
 
     public Rating() {
-        setRideId("");
+        setRiderId("");
         setDriverId("");
-        setRating("");
         setRating("");
     }
 
-    public Rating(String driverId, String riderId, String rating, String rideId){
-        this.setRideId(rideId);
+    public Rating(String driverId, String riderId, String rating){
         this.setDriverId(driverId);
         this.setRating(rating);
         this.setRiderId(riderId);
-    }
-
-    public String getRideId()
-    {
-        return rideId;
-    }
-
-    public void setRideId(String rideId)
-    {
-        this.rideId = rideId;
     }
 
     public String getDriverId()

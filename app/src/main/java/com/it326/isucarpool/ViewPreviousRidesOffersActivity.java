@@ -39,6 +39,7 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
     private ArrayList<CarpoolOffer> rideList = new ArrayList<>();
     private ArrayList<Rating> allRatingList = new ArrayList<>();
     private ArrayList<Double> ratingList = new ArrayList<>();
+
     DatabaseReference ref2;
     ValueEventListener postListener2;
 
@@ -81,8 +82,7 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
                 offerList.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     fillRidesList(child.getKey());
-                }
-            }
+                }}
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -125,18 +125,16 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
                     offer.setRideId(key);
                     offerList.add(offer);
                     getAllRatings();
-                    calculateRating(offer.getRiderId(), key);
+                    calculateRating(offer.getRiderId(), offer.getRiderRating());
                     drawListView();
                 }
                 else if(rid.equals(id) && listToShow == 1){
                     offer.setRideId(key);
                     rideList.add(offer);
                     getAllRatings();
-                    calculateRating(offer.getDriverId(), key);
-
+                    calculateRating(offer.getDriverId(), offer.getDriverRating());
                     drawListView();
                 }
-                drawListView();
             }
 
             @Override
@@ -179,23 +177,23 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
     public boolean onContextItemSelected(MenuItem item) {
         if(item.getTitle()=="Rate: 1"){
             Toast.makeText(getApplicationContext(),"Rated Driver 1",Toast.LENGTH_LONG).show();
-            createRating(1, selectUserId, selectRideId);
+            createRating(1, selectUserId);
         }
         else if(item.getTitle()=="Rate: 2"){
             Toast.makeText(getApplicationContext(),"Rated Driver 2",Toast.LENGTH_LONG).show();
-            createRating(2, selectUserId, selectRideId);
+            createRating(2, selectUserId);
         }
         else if(item.getTitle()=="Rate: 3"){
             Toast.makeText(getApplicationContext(),"Rated Driver 3",Toast.LENGTH_LONG).show();
-            createRating(3, selectUserId, selectRideId);
+            createRating(3, selectUserId);
         }
         else if(item.getTitle()=="Rate: 4"){
             Toast.makeText(getApplicationContext(),"Rated Driver 4",Toast.LENGTH_LONG).show();
-            createRating(4, selectUserId, selectRideId);
+            createRating(4, selectUserId);
         }
         else if(item.getTitle()=="Rate: 5"){
             Toast.makeText(getApplicationContext(),"Rated Driver 5",Toast.LENGTH_LONG).show();
-            createRating(5, selectUserId, selectRideId);
+            createRating(5, selectUserId);
         }
         else{
             return false;
@@ -206,28 +204,31 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
     @Override
     public void toggleList() {
         Button b = (Button) findViewById(R.id.toggle_btn);
+        TextView t = (TextView) findViewById(R.id.prev_rd);
         rideList.clear();
         offerList.clear();
         getAllRatings();
         if(listToShow == 0){
-            b.setText("View Previous Offers");
+            b.setText("View Previous Riders");
+            t.setText("Previous Drivers:");
             listToShow = 1;
         }
         else{
-            b.setText("View Previous Rides");
+            b.setText("View Previous Drivers");
+            t.setText("Previous Riders:");
             listToShow = 0;
         }
         getAllRides();
     }
 
-    public void createRating(int rating, String id, String rideId) {
+    public void createRating(int rating, String id) {
         fb = FirebaseAuth.getInstance();
         Rating rate = null;
         if(listToShow == 0){
-            rate = new Rating(FirebaseAuth.getInstance().getCurrentUser().getUid(), id, String.valueOf(rating), rideId);
+            rate = new Rating(FirebaseAuth.getInstance().getCurrentUser().getUid(), id, String.valueOf(rating));
         }
         else{
-            rate = new Rating(id, FirebaseAuth.getInstance().getCurrentUser().getUid(), String.valueOf(rating), rideId);
+            rate = new Rating(id, FirebaseAuth.getInstance().getCurrentUser().getUid(), String.valueOf(rating));
         }
         final String[] genId = {""};
         FirebaseDatabase.getInstance().getReference("ratings").push().setValue(rate, new DatabaseReference.CompletionListener() {
@@ -246,8 +247,9 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
         });
     }
 
-    private void calculateRating(final String key, String rideKey) {
+    public void calculateRating(final String key, boolean rated) {
         ArrayList<Double> tmpRatingList = new ArrayList<>();
+        int count = 0;
         for(int j = 0; j < allRatingList.size(); j++){
             if(listToShow == 0) {
                 String val = allRatingList.get(j).getRiderId();
