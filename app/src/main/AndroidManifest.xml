@@ -39,6 +39,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ChatsActivity"
+            android:label="Chat"
+            android:theme="@style/AppTheme"/>
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"

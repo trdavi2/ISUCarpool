@@ -182,7 +182,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 cursor.close();
                 profilePicture = (ImageView) findViewById(R.id.profile_picture);
                 Bitmap b = BitmapFactory.decodeFile(imgDecodableString);
-                b = ThumbnailUtils.extractThumbnail(b, 144, 144);
+                //b = ThumbnailUtils.extractThumbnail(b, 144, 144);
                 profilePicture.setImageBitmap(b);
 
             }
