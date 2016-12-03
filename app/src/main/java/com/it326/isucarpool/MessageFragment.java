@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.it326.isucarpool.model.Chat;
@@ -50,17 +51,30 @@ public class MessageFragment extends Fragment
         input = (EditText) v.findViewById(R.id.input);
         input.setText(chatId);
         messages = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages");
+        messageList = (ListView) v.findViewById(R.id.list_of_messages);
+        displayChatMessages();
+
+        send = (Button) v.findViewById(R.id.send_button);
+        send.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                messages.push().setValue(new Message(input.getText().toString(), FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                input.setText("");
+            }
+        });
+
         return v;
     }
 
     private void displayChatMessages()
     {
-        //final ListView messages = (ListView) findViewById(R.id.list_of_messages);
+
+        //final ListView messageList = (ListView) this.getActivity().findViewById(R.id.list_of_messages);
         adapter = new FirebaseListAdapter<Message>(this.getActivity(), Message.class, R.layout.message, messages) {
 
             @Override
             protected void populateView(View v, Message model, int position) {
-                messageList = (ListView) v.findViewById(R.id.list_of_messages);
+                //messageList = (ListView) v.findViewById(R.id.list_of_messages);
                 // Get references to the views of message.xml
                 TextView messageText = (TextView) v.findViewById(R.id.message_text);
                 //TextView messageUser = (TextView) v.findViewById(R.id.message_user);

@@ -80,6 +80,7 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
             args.putString("chatId", chatId.get(i));
             messageFragment.setArguments(args);
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_chat, messageFragment).commit();
+            list.setVisibility(View.GONE);
         }
     });
     }
