@@ -30,7 +30,7 @@
         android:src="@mipmap/ic_launcher" />
 
     <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="vertical">
         <TableRow>
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:orientation="horizontal">
-            <TextView
+                <TextView
                     android:id="@+id/current_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

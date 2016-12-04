@@ -50,7 +50,6 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
     DatabaseReference ref2;
     ValueEventListener postListener2;
     boolean shortClick = false;
-
     int listToShow = 0;
     String selectUserId = "";
     String selectRideId = "";
@@ -175,18 +174,16 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        if(listToShow == 0){
-            menu.setHeaderTitle("Rate Rider");
-        }
-        else{
-            menu.setHeaderTitle("Rate Driver");
-        }
-        menu.add(0, v.getId(), 0, "Rate: 1");
-        menu.add(0, v.getId(), 0, "Rate: 2");
-        menu.add(0, v.getId(), 0, "Rate: 3");
-        menu.add(0, v.getId(), 0, "Rate: 4");
-        menu.add(0, v.getId(), 0, "Rate: 5");
-
+            if (listToShow == 0) {
+                menu.setHeaderTitle("Rate Rider");
+            } else {
+                menu.setHeaderTitle("Rate Driver");
+            }
+            menu.add(0, v.getId(), 0, "Rate: 1");
+            menu.add(0, v.getId(), 0, "Rate: 2");
+            menu.add(0, v.getId(), 0, "Rate: 3");
+            menu.add(0, v.getId(), 0, "Rate: 4");
+            menu.add(0, v.getId(), 0, "Rate: 5");
     }
 
     public boolean onContextItemSelected(MenuItem item) {

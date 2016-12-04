@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -56,11 +57,10 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
         final CarpoolOffer p = getItem(position);
 
         if (p != null) {
-            loadProfilePicture(p.getDriverId());
             ImageView pic = (ImageView) v.findViewById(R.id.imageView1);
             TextView id = (TextView) v.findViewById(R.id.ride_id);
             TextView did = (TextView) v.findViewById(R.id.driver_id);
-
+            Button edit = (Button) v.findViewById(R.id.edit_btn);
             TextView tt1 = (TextView) v.findViewById(R.id.ride_driver);
             TextView tt2 = (TextView) v.findViewById(R.id.ride_departure);
             TextView tt3 = (TextView) v.findViewById(R.id.ride_dest);
@@ -74,7 +74,7 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             }
 
             if (tt1 != null) {
-                getDriverInfo(p.getDriverId(), tt1);
+                getDriverInfo(p.getDriverId(), tt1, v);
             }
 
             if (tt2 != null) {
@@ -96,12 +96,17 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                     pic.setImageBitmap(resizedbitmap);
                 }
             }
+            if(edit != null){
+                if(did.getText().toString().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    edit.setVisibility(View.VISIBLE);
+                }
+            }
         }
 
         return v;
     }
 
-    public void loadProfilePicture(String key){
+    public void loadProfilePicture(String key, final View v){
         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com/");
         final long ONE_MEGABYTE = 1024 * 1024;
         storageRef.child("profile_pictures/" + key + ".jpeg").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
@@ -109,7 +114,9 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             public void onSuccess(byte[] bytes) {
                 if(bytes != null) {
                     Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    profilePic = bitmap;
+                    ImageView pic = (ImageView) v.findViewById(R.id.imageView1);
+                    Bitmap resizedbitmap = Bitmap.createScaledBitmap(bitmap, 225, 225, true);
+                    pic.setImageBitmap(resizedbitmap);
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -119,7 +126,8 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
         });
     }
 
-    public void getDriverInfo(String key, final TextView tv){
+    public void getDriverInfo(String key, final TextView tv, View v){
+        loadProfilePicture(key, v);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(key).child("profile");
         ValueEventListener postListener = new ValueEventListener() {
             @Override

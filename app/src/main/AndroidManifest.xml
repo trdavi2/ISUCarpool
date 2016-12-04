@@ -94,7 +94,7 @@
 
         <activity
             android:name=".ViewPreviousRidesOffersActivity"
-            android:label="Previous Rides and Offers"
+            android:label="Previous Rides/Offers"
             android:parentActivityName=".MainActivity"
             android:theme="@style/AppTheme">
             <meta-data

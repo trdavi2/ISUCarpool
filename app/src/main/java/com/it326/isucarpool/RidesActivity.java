@@ -81,8 +81,8 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 RideInfoFragment frag = new RideInfoFragment();
-                TextView id = (TextView) findViewById(R.id.ride_id);
-                TextView did = (TextView) findViewById(R.id.driver_id);
+                TextView id = (TextView) view.findViewById(R.id.ride_id);
+                TextView did = (TextView) view.findViewById(R.id.driver_id);
 
                 EditText s = (EditText) findViewById(R.id.search_destinations);
                 Button b = (Button) findViewById(R.id.search_btn);
@@ -106,9 +106,6 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         getAllRides("");
     }
 
-    ValueEventListener postListener2;
-    DatabaseReference ref2;
-
     @Override
     public void onBackPressed() {
         ListView list = (ListView) findViewById(R.id.rideslistview);
@@ -129,70 +126,54 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
             public void onDataChange(DataSnapshot dataSnapshot) {
                 rideList.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    fillRidesList(child.getKey(), search);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-        ref.addListenerForSingleValueEvent(postListener1);
-    }
-
-    private void fillRidesList(final String key, final String search) {
-        ref2 = FirebaseDatabase.getInstance().getReference("rides").child(key);
-        postListener2 = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                CarpoolOffer offer = dataSnapshot.getValue(CarpoolOffer.class);
-                offer.setRideId(key);
-                if (offer != null) {
-                    double rad = Double.parseDouble(offer.getRadius().split(" ")[0]);
-                    double start = CalculationByDistance(offer.getStartingPoint());
-                    double dest = CalculationByDistance(offer.getDestination());
-                    Calendar calendar = Calendar.getInstance();
-                    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
-                    Date current = null;
-                    String currentDateandTime = sdf.format(new Date());
-                    try {
-                        current = sdf.parse(currentDateandTime);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                    int year = calendar.get(Calendar.YEAR);
-                    String date = offer.getDeparture().split(", ")[0] + "/" + year + " " + offer.getDeparture().split(", ")[1];
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
-                    Date convertedDate = new Date();
-                    try {
-                        convertedDate = dateFormat.parse(date);
-                    } catch (ParseException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    if (convertedDate.after(current)) {
-                        if ((start < rad || dest < rad) && search.equals("")) {
-                            if (offer.getGender().equals("Males") && user.getGender() == "Male") {
-                                rideList.add(offer);
-                                drawListView();
-                            } else if (offer.getGender().equals("Females") && user.getGender() == "Female") {
-                                rideList.add(offer);
-                                drawListView();
-                            } else if (offer.getGender().equals("Males, Females")) {
-                                rideList.add(offer);
-                                drawListView();
-                            }
-                        } else if ((start < rad || dest < rad) && !search.equals("")) {
-                            if (offer.getGender().equals("Males") && user.getGender() == "Male" && offer.getDestination().contains(search)) {
-                                rideList.add(offer);
-                                drawListView();
-                            } else if (offer.getGender().equals("Females") && user.getGender() == "Female" && offer.getDestination().contains(search)) {
-                                rideList.add(offer);
-                                drawListView();
-                            } else if (offer.getGender().equals("Males, Females") && offer.getDestination().contains(search)) {
-                                rideList.add(offer);
-                                drawListView();
+                    String key = child.getKey();
+                    CarpoolOffer offer = child.getValue(CarpoolOffer.class);
+                    offer.setRideId(key);
+                    if (offer != null) {
+                        double rad = Double.parseDouble(offer.getRadius().split(" ")[0]);
+                        double start = CalculationByDistance(offer.getStartingPoint());
+                        double dest = CalculationByDistance(offer.getDestination());
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
+                        Date current = null;
+                        String currentDateandTime = sdf.format(new Date());
+                        try {
+                            current = sdf.parse(currentDateandTime);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        int year = calendar.get(Calendar.YEAR);
+                        String date = offer.getDeparture().split(", ")[0] + "/" + year + " " + offer.getDeparture().split(", ")[1];
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy hh:mm aa");
+                        Date convertedDate = new Date();
+                        try {
+                            convertedDate = dateFormat.parse(date);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if (convertedDate.after(current)) {
+                            if ((start < rad || dest < rad) && search.equals("")) {
+                                if (offer.getGender().equals("Males") && user.getGender() == "Male") {
+                                    rideList.add(offer);
+                                    drawListView();
+                                } else if (offer.getGender().equals("Females") && user.getGender() == "Female") {
+                                    rideList.add(offer);
+                                    drawListView();
+                                } else if (offer.getGender().equals("Males, Females")) {
+                                    rideList.add(offer);
+                                    drawListView();
+                                }
+                            } else if ((start < rad || dest < rad) && !search.equals("")) {
+                                if (offer.getGender().equals("Males") && user.getGender() == "Male" && offer.getDestination().contains(search)) {
+                                    rideList.add(offer);
+                                    drawListView();
+                                } else if (offer.getGender().equals("Females") && user.getGender() == "Female" && offer.getDestination().contains(search)) {
+                                    rideList.add(offer);
+                                    drawListView();
+                                } else if (offer.getGender().equals("Males, Females") && offer.getDestination().contains(search)) {
+                                    rideList.add(offer);
+                                    drawListView();
+                                }
                             }
                         }
                     }
@@ -204,7 +185,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         };
-        ref2.addListenerForSingleValueEvent(postListener2);
+        ref.addListenerForSingleValueEvent(postListener1);
     }
 
     public void drawListView() {
