@@ -58,6 +58,8 @@ public class ChatListAdapter extends ArrayAdapter<Chat>
             chatIdField.setText(chatId.get(position));
 
 
+
+
         }
 
         return v;

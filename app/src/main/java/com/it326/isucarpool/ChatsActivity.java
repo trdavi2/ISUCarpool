@@ -73,16 +73,16 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
         //drawListView();
         final ListView list = (ListView) findViewById(R.id.list_of_chats);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-            MessageFragment messageFragment = new MessageFragment();
-            Bundle args = new Bundle();
-            args.putString("chatId", chatId.get(i));
-            messageFragment.setArguments(args);
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_chat, messageFragment).commit();
-            list.setVisibility(View.GONE);
-        }
-    });
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MessageFragment messageFragment = new MessageFragment();
+                Bundle args = new Bundle();
+                args.putString("chatId", chatId.get(i));
+                messageFragment.setArguments(args);
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_chat, messageFragment).commit();
+                list.setVisibility(View.GONE);
+            }
+        });
     }
 
     public void getAllChats() {
@@ -128,7 +128,7 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
                 TextView messageTime = (TextView) v.findViewById(R.id.message_time);
 
                 // Set their text
-                ArrayList<Message> chatMessages = model.getMessages();
+                //ArrayList<Message> chatMessages = model.getMessages();
                // Message lastMessage = chatMessages.get(chatMessages.size() - 1);
                 //messageText.setText(lastMessage.getMessageText());
                 //messageUser.setText(lastMessage.getMessageUser());

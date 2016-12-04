@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -107,24 +109,25 @@ public class MessageFragment extends Fragment
                 //messageList = (ListView) v.findViewById(R.id.list_of_messages);
                 // Get references to the views of message.xml
                 TextView messageText = (TextView) v.findViewById(R.id.message_text);
+                RelativeLayout rl = (RelativeLayout) v.findViewById(R.id.message);
                 //TextView messageUser = (TextView) v.findViewById(R.id.message_user);
                 //TextView messageTime = (TextView) v.findViewById(R.id.message_time);
-/*
-                LinearLayout.LayoutParams leftMessage = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                leftMessage.setMargins(5, 5, 25, 5);
-                LinearLayout.LayoutParams rightMessage = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                rightMessage.setMargins(25, 5, 5, 5);
-*/
+
+               LayoutParams leftMessage = (RelativeLayout.LayoutParams) messageText.getLayoutParams();
+                leftMessage.setMargins(5, 5, 75, 5);
+                LayoutParams rightMessage = (RelativeLayout.LayoutParams) messageText.getLayoutParams();
+                rightMessage.setMargins(75, 5, 5, 5);
+
+
                 messageText.setText(model.getMessageText());
 
                 if(model.getMessageUser().equals(currUserId)) {
-                    //messageText.setLayoutParams(rightMessage);
+                    messageText.setLayoutParams(leftMessage);
                     messageText.setGravity(Gravity.END);
                     messageText.setPaddingRelative(25, 5, 5, 5);
-                    //messageText.setBackgroundColor(Color.BLUE);
-                    //messageText.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_END);
+                    messageText.setBackgroundColor(Color.LTGRAY);
                 } else {
-                   // messageText.setLayoutParams(leftMessage);
+                    messageText.setLayoutParams(rightMessage);
                     messageText.setGravity(Gravity.START);
                     messageText.setPaddingRelative(5, 5, 25, 5);
                     messageText.setBackgroundColor(Color.BLUE);
