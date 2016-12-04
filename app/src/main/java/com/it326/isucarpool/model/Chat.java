@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 public class Chat
 {
-    private ArrayList<Message> messages;
     private String riderId;
     private String driverId;
 
@@ -17,8 +16,6 @@ public class Chat
     }
 
     public Chat(String input, String sriderId) {
-        this.setMessages(new ArrayList<Message>());
-        getMessages().add(new Message(input, sriderId));
         riderId = sriderId;
         setDriverId("");
     }
@@ -30,14 +27,6 @@ public class Chat
 
     public void setRiderId(String id) {
         this.riderId = id;
-    }
-
-    public ArrayList<Message> getMessages() {
-        return messages;
-    }
-
-    public void setMessages(ArrayList<Message> messages) {
-        this.messages = messages;
     }
 
     public String getDriverId() {
