@@ -9,7 +9,10 @@ import java.util.Map;
 
 public class Chat
 {
+<<<<<<< HEAD
     //private ArrayList<Message> messages;
+=======
+>>>>>>> origin/master
     private String riderId;
     private String driverId;
     //private Map<String, Message> messages;
@@ -18,9 +21,13 @@ public class Chat
     {
     }
 
+<<<<<<< HEAD
     public Chat(String sdriverId, String sriderId) {
         //this.setMessages(new ArrayList<Message>());
         //getMessages().add(new Message(input, sriderId));
+=======
+    public Chat(String input, String sriderId) {
+>>>>>>> origin/master
         riderId = sriderId;
         driverId = sdriverId;
     }
@@ -34,6 +41,7 @@ public class Chat
         this.riderId = id;
     }
 
+<<<<<<< HEAD
 /*
     public ArrayList<Message> getMessages() {
         return messages;
@@ -43,6 +51,8 @@ public class Chat
         this.messages = messages;
     }
 */
+=======
+>>>>>>> origin/master
     public String getDriverId() {
         return driverId;
     }

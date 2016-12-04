@@ -33,15 +33,17 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
     private String driver = "";
     private int offerOrRide = 0;
     private Bitmap profilePic;
+    private List<Rating> allRatingList = new ArrayList<>();
     private List<Double> ratingList = new ArrayList<>();
 
     public PrevRidesListAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
 
-    public PrevRidesListAdapter(Context context, int resource, List<CarpoolOffer> rides, List<Double> ratingList, int offerOrRide) {
+    public PrevRidesListAdapter(Context context, int resource, List<CarpoolOffer> rides, List<Double> ratingList,List<Rating> allRatingList, int offerOrRide) {
         super(context, resource, rides);
         this.offerOrRide = offerOrRide;
+        this.allRatingList = allRatingList;
         this.ratingList = ratingList;
     }
 
@@ -61,6 +63,9 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
         if (p != null) {
             ImageView pic = (ImageView) v.findViewById(R.id.imageView1);
             TextView user = (TextView) v.findViewById(R.id.user_id);
+            TextView rated = (TextView) v.findViewById(R.id.rated);
+            TextView yr = (TextView) v.findViewById(R.id.your_rating);
+            TextView ride = (TextView) v.findViewById(R.id.ride_id);
             TextView tt1 = (TextView) v.findViewById(R.id.ride_driver);
             TextView tt2 = (TextView) v.findViewById(R.id.date_dept);
             TextView tt3 = (TextView) v.findViewById(R.id.current_rating);
@@ -72,6 +77,14 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                 else{
                     user.setText(p.getDriverId());
                 }
+            }
+
+            if(rated != null){
+                rated.setText(p.getDriverRated() + "," + p.getRiderRated());
+            }
+
+            if(ride != null){
+                ride.setText(p.getRideId());
             }
 
             if (tt1 != null) {
@@ -99,9 +112,42 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                 }
             }
 
-
+            if(yr != null){
+                Rating r = null;
+                if(offerOrRide == 0) {
+                    if(allRatingList.size() > position) {
+                        for(int i = 0; i < allRatingList.size(); i++){
+                            if(allRatingList.get(i).getRideId().equals(p.getRideId())
+                                    && allRatingList.get(i).getRiderId().equals(p.getRiderId())){
+                                r = allRatingList.get(i);
+                            }
+                        }
+                    }
+                    if(r == null){
+                        yr.setText("Rate Rider!");
+                    }
+                    else if(p.getRideId().equals(r.getRideId())){
+                        yr.setText("You Rated: " + r.getRating());
+                    }
+                }
+                else {
+                    if(allRatingList.size() > position) {
+                        for(int i = 0; i < allRatingList.size(); i++){
+                            if(allRatingList.get(i).getRideId().equals(p.getRideId())
+                                    && allRatingList.get(i).getDriverId().equals(p.getDriverId())){
+                                r = allRatingList.get(i);
+                            }
+                        }
+                    }
+                    if(r == null){
+                        yr.setText("Rate Driver!");
+                    }
+                    else if (p.getRideId().equals(r.getRideId())) {
+                        yr.setText("You Rated: " + r.getRating());
+                    }
+                }
+            }
         }
-
         return v;
     }
 

@@ -1,12 +1,19 @@
 package com.it326.isucarpool;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Criteria;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
@@ -42,9 +49,11 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
 
     DatabaseReference ref2;
     ValueEventListener postListener2;
+    boolean shortClick = false;
 
     int listToShow = 0;
     String selectUserId = "";
+    String selectRideId = "";
     private FirebaseAuth fb;
 
     @Override
@@ -58,18 +67,43 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         listToShow = 0;
+        registerForContextMenu(list);
+        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                boolean b;
+                if(shortClick == false){
+                    b = true;
+                }
+                else{
+                    b = false;
+                    shortClick = false;
+                }
+                return b;
+            }
+        });
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                openContextMenu(view);
+                TextView rated = (TextView) view.findViewById(R.id.rated);
+                String dr = rated.getText().toString().split(",")[0];
+                String rr = rated.getText().toString().split(",")[1];
+                if((listToShow == 0 && !rr.equals("true")) || listToShow == 1 && !dr.equals("true")) {
+                    shortClick = true;
+                    openContextMenu(view);
+                }
+                else{
+                    shortClick = false;
+                }
                 TextView uid = (TextView) view.findViewById(R.id.user_id);
+                TextView rid = (TextView) view.findViewById(R.id.ride_id);
+                selectRideId = rid.getText().toString();
                 selectUserId = uid.getText().toString();
             }
         });
-        registerForContextMenu(list);
         getAllRatings();
-        getAllRides();
     }
+
     public void getAllRides() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides");
         ValueEventListener postListener1 = new ValueEventListener() {
@@ -78,8 +112,24 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
                 rideList.clear();
                 offerList.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    fillRidesList(child.getKey());
-                }}
+                    CarpoolOffer offer = child.getValue(CarpoolOffer.class);
+                    String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    final String did = offer.getDriverId();
+                    final String rid = offer.getRiderId();
+
+                    if(did.equals(id) && !rid.equals("") && listToShow == 0) {
+                        offer.setRideId(child.getKey());
+                        offerList.add(offer);
+                        calculateRating(offer.getRiderId());
+                    }
+                    else if(rid.equals(id) && listToShow == 1){
+                        offer.setRideId(child.getKey());
+                        rideList.add(offer);
+                        calculateRating(offer.getDriverId());
+                    }
+                }
+                drawListView();
+            }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -99,6 +149,7 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
                     Rating rate = child.getValue(Rating.class);
                     allRatingList.add(rate);
                 }
+                getAllRides();
             }
 
             @Override
@@ -106,51 +157,18 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         };
-        ref.addListenerForSingleValueEvent(postListener1);
-    }
-
-    private void fillRidesList(final String key) {
-        ref2 = FirebaseDatabase.getInstance().getReference("rides").child(key);
-        postListener2 = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                CarpoolOffer offer = dataSnapshot.getValue(CarpoolOffer.class);
-                String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                String did = offer.getDriverId();
-                String rid = offer.getRiderId();
-                if(did.equals(id) && !rid.equals("") && listToShow == 0) {
-                    offer.setRideId(key);
-                    offerList.add(offer);
-                    getAllRatings();
-                    calculateRating(offer.getRiderId(), offer.getRiderRating());
-                    drawListView();
-                }
-                else if(rid.equals(id) && listToShow == 1){
-                    offer.setRideId(key);
-                    rideList.add(offer);
-                    getAllRatings();
-                    calculateRating(offer.getDriverId(), offer.getDriverRating());
-                    drawListView();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
-            }
-        };
-        ref2.addListenerForSingleValueEvent(postListener2);
+        ref.addValueEventListener(postListener1);
     }
 
     public void drawListView() {
         if(listToShow == 0) {
             ListView yourListView = (ListView) findViewById(R.id.prevrideslistview);
-            PrevRidesListAdapter customAdapter = new PrevRidesListAdapter(this, R.layout.adapter_prevrides_listitem, offerList, ratingList, 0);
+            PrevRidesListAdapter customAdapter = new PrevRidesListAdapter(this, R.layout.adapter_prevrides_listitem, offerList, ratingList, allRatingList, 0);
             yourListView.setAdapter(customAdapter);
         }
         else{
             ListView yourListView = (ListView) findViewById(R.id.prevrideslistview);
-            PrevRidesListAdapter customAdapter = new PrevRidesListAdapter(this, R.layout.adapter_prevrides_listitem, rideList, ratingList, 1);
+            PrevRidesListAdapter customAdapter = new PrevRidesListAdapter(this, R.layout.adapter_prevrides_listitem, rideList, ratingList, allRatingList, 1);
             yourListView.setAdapter(customAdapter);
         }
     }
@@ -204,7 +222,6 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
         TextView t = (TextView) findViewById(R.id.prev_rd);
         rideList.clear();
         offerList.clear();
-        getAllRatings();
         if(listToShow == 0){
             b.setText("View Previous Riders");
             t.setText("Previous Drivers:");
@@ -215,38 +232,39 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
             t.setText("Previous Riders:");
             listToShow = 0;
         }
-        getAllRides();
+        getAllRatings();
+
     }
 
     public void createRating(int rating, String id) {
         fb = FirebaseAuth.getInstance();
         Rating rate = null;
-        if(listToShow == 0){
-            rate = new Rating(FirebaseAuth.getInstance().getCurrentUser().getUid(), id, String.valueOf(rating));
+        if (listToShow == 0) {
+            rate = new Rating(FirebaseAuth.getInstance().getCurrentUser().getUid(), id, String.valueOf(rating), selectRideId);
+        } else {
+            rate = new Rating(id, FirebaseAuth.getInstance().getCurrentUser().getUid(), String.valueOf(rating), selectRideId);
         }
-        else{
-            rate = new Rating(id, FirebaseAuth.getInstance().getCurrentUser().getUid(), String.valueOf(rating));
-        }
-        final String[] genId = {""};
         FirebaseDatabase.getInstance().getReference("ratings").push().setValue(rate, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
                     System.out.println("Data could not be saved. " + databaseError.getMessage());
                 } else {
-                    genId[0] = databaseReference.getKey();
+                    if (listToShow == 0) {
+                        FirebaseDatabase.getInstance().getReference("rides").child(selectRideId).child("riderRated").setValue(true);
+                    } else {
+                        FirebaseDatabase.getInstance().getReference("rides").child(selectRideId).child("driverRated").setValue(true);
+                    }
                     getAllRatings();
-                    getAllRides();
-                    Toast.makeText(getApplicationContext(),"Rating successful",Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(getApplicationContext(), "Rating successful", Toast.LENGTH_LONG).show();
                 }
             }
         });
+
     }
 
-    public void calculateRating(final String key, boolean rated) {
+    public void calculateRating(final String key) {
         ArrayList<Double> tmpRatingList = new ArrayList<>();
-        int count = 0;
         for(int j = 0; j < allRatingList.size(); j++){
             if(listToShow == 0) {
                 String val = allRatingList.get(j).getRiderId();
