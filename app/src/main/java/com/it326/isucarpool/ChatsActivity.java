@@ -123,7 +123,7 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
             @Override
             protected void populateView(View v, Chat model, int position) {
                 // Get references to the views of message.xml
-                TextView messageText = (TextView) v.findViewById(R.id.message_text);
+                //TextView messageText = (TextView) v.findViewById(R.id.message_text);
                 TextView messageUser = (TextView) v.findViewById(R.id.message_user);
                 TextView messageTime = (TextView) v.findViewById(R.id.message_time);
 
