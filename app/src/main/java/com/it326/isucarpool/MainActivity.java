@@ -249,10 +249,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
 
         } else if (id == R.id.nav_logout) {
-            FirebaseAuth.getInstance().signOut();
-            intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-
+            logout();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -411,4 +408,12 @@ public class MainActivity extends AppCompatActivity
         NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(001, mBuilder.build());
     }*/
+
+    public void logout()
+    {
+        System.out.println("");
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
 }
