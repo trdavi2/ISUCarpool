@@ -108,7 +108,7 @@ public class MessageFragment extends Fragment
             protected void populateView(View v, Message model, int position) {
                 //messageList = (ListView) v.findViewById(R.id.list_of_messages);
                 // Get references to the views of message.xml
-                TextView messageText = (TextView) v.findViewById(R.id.message_text);
+                /*
                 RelativeLayout rl = (RelativeLayout) v.findViewById(R.id.message);
                 //TextView messageUser = (TextView) v.findViewById(R.id.message_user);
                 //TextView messageTime = (TextView) v.findViewById(R.id.message_time);
@@ -119,20 +119,24 @@ public class MessageFragment extends Fragment
                 rightMessage.setMargins(75, 5, 5, 5);
 
 
+*/              TextView messageText;
 
 
-                messageText.setText(model.getMessageText());
 
                 if(model.getMessageUser().equals(currUserId)) {
-                    messageText.setLayoutParams(leftMessage);
+                    messageText = (TextView) v.findViewById(R.id.message_text_r);
+                    messageText.setText(model.getMessageText());
                     messageText.setGravity(Gravity.END);
-                    messageText.setPaddingRelative(25, 5, 5, 5);
+                    //messageText.setLayoutParams(rightMessage);
+                    //messageText.s
+                    //messageText.setPaddingRelative(75, 10, 15, 10);
                     messageText.setBackgroundColor(Color.LTGRAY);
                 } else {
-                    messageText.setLayoutParams(rightMessage);
-                    messageText.setGravity(Gravity.START);
-                    messageText.setPaddingRelative(5, 5, 25, 5);
+                    messageText = (TextView) v.findViewById(R.id.message_text_l);
+                    messageText.setText(model.getMessageText());
+                    //messageText.setPaddingRelative(15, 10, 25, 10);
                     messageText.setBackgroundColor(Color.parseColor("#ce1126"));
+                    messageText.setTextColor(Color.WHITE);
                 }
 
 

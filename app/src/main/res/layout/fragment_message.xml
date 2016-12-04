@@ -39,6 +39,8 @@
         android:stackFromBottom="true"
         android:transcriptMode="alwaysScroll"
         android:layout_alignParentTop="true"
-        android:layout_above="@+id/send_button"></ListView>
+        android:layout_above="@+id/send_button"
+        android:dividerHeight="0dp"
+        android:divider="@null"></ListView>
 
 </RelativeLayout>
