@@ -237,7 +237,6 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
     }
 
     public void createRating(int rating, String id) {
-        fb = FirebaseAuth.getInstance();
         Rating rate = null;
         if (listToShow == 0) {
             rate = new Rating(FirebaseAuth.getInstance().getCurrentUser().getUid(), id, String.valueOf(rating), selectRideId);
@@ -249,7 +248,8 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
                     System.out.println("Data could not be saved. " + databaseError.getMessage());
-                } else {
+                }
+                else {
                     if (listToShow == 0) {
                         FirebaseDatabase.getInstance().getReference("rides").child(selectRideId).child("riderRated").setValue(true);
                     } else {

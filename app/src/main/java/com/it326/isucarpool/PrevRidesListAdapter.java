@@ -115,12 +115,10 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             if(yr != null){
                 Rating r = null;
                 if(offerOrRide == 0) {
-                    if(allRatingList.size() > position) {
-                        for(int i = 0; i < allRatingList.size(); i++){
-                            if(allRatingList.get(i).getRideId().equals(p.getRideId())
-                                    && allRatingList.get(i).getRiderId().equals(p.getRiderId())){
-                                r = allRatingList.get(i);
-                            }
+                    for(int i = 0; i < allRatingList.size(); i++){
+                        if(allRatingList.get(i).getRideId().equals(p.getRideId())
+                                && allRatingList.get(i).getRiderId().equals(p.getRiderId())){
+                            r = allRatingList.get(i);
                         }
                     }
                     if(r == null){
@@ -131,12 +129,10 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                     }
                 }
                 else {
-                    if(allRatingList.size() > position) {
-                        for(int i = 0; i < allRatingList.size(); i++){
-                            if(allRatingList.get(i).getRideId().equals(p.getRideId())
-                                    && allRatingList.get(i).getDriverId().equals(p.getDriverId())){
-                                r = allRatingList.get(i);
-                            }
+                    for(int i = 0; i < allRatingList.size(); i++) {
+                        if (allRatingList.get(i).getRideId().equals(p.getRideId())
+                                && allRatingList.get(i).getDriverId().equals(p.getDriverId())) {
+                            r = allRatingList.get(i);
                         }
                     }
                     if(r == null){
