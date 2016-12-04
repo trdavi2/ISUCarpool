@@ -344,8 +344,6 @@ public class MainActivity extends AppCompatActivity
                 if (databaseError != null) {
                     System.out.println("Data could not be saved. " + databaseError.getMessage());
                 } else {
-                    //rideList.clear();
-                    //getAllRides();
                     if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                         getSupportFragmentManager().popBackStackImmediate();
                         getSupportActionBar().setTitle("Home");
@@ -353,6 +351,12 @@ public class MainActivity extends AppCompatActivity
                                 Toast.LENGTH_LONG).show();
                         RelativeLayout list = (RelativeLayout) findViewById(R.id.content_main);
                         list.setVisibility(View.VISIBLE);
+                        Button b = (Button) findViewById(R.id.route);
+                        EditText s = (EditText) findViewById(R.id.startingLocation);
+                        EditText e = (EditText) findViewById(R.id.endingLocation);
+                        s.setVisibility(View.VISIBLE);
+                        e.setVisibility(View.VISIBLE);
+                        b.setVisibility(View.VISIBLE);
                         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
                         fab.setVisibility(View.VISIBLE);
                     }

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,6 +35,10 @@ import java.util.List;
 
 public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
 
+    public interface rideListListener{
+        void editOffer(CarpoolOffer ride, String key);
+    }
+    rideListListener listener;
     private String driver = "";
     private Bitmap profilePic;
 
@@ -44,7 +51,7 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
 
         View v = convertView;
 
@@ -64,7 +71,7 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             TextView tt1 = (TextView) v.findViewById(R.id.ride_driver);
             TextView tt2 = (TextView) v.findViewById(R.id.ride_departure);
             TextView tt3 = (TextView) v.findViewById(R.id.ride_dest);
-
+            CarpoolOffer ride = null;
             if(id != null){
                 id.setText(p.getRideId());
             }
@@ -99,6 +106,12 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             if(edit != null){
                 if(did.getText().toString().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                     edit.setVisibility(View.VISIBLE);
+                    edit.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            getRide(p.getRideId());
+                        }
+                    });
                 }
             }
         }
@@ -143,7 +156,31 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         };
-
         ref.addValueEventListener(postListener);
     }
+    public void getRide(final String key){
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides").child(key);
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                CarpoolOffer ride = dataSnapshot.getValue(CarpoolOffer.class);
+                editOffer(ride, key);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        ref.addListenerForSingleValueEvent(postListener);
+    }
+    public void editOffer(CarpoolOffer ride, String key) {
+        if(listener != null){
+            listener.editOffer(ride, key);
+        }
+    }
+    public void setRideListListener(rideListListener listener){
+        this.listener = listener;
+    }
+
 }

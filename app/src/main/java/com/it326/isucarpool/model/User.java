@@ -1,13 +1,13 @@
 package com.it326.isucarpool.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Tim on 10/20/16.
  */
 
-public class User
-{
+public class User {
     private String firstName;
     private String lastName;
     private String email;

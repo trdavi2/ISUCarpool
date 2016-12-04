@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -37,6 +38,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.identity.intents.Address;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -60,7 +63,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener, RideInfoFragment.rideInfoFragmentListener {
+public class RidesActivity extends AppCompatActivity implements RidesFragment.ridesListener, RideInfoFragment.rideInfoFragmentListener, EditRideFragment.editRideFragmentListener {
 
     private User user = MainActivity.getUser();
     private ArrayList<CarpoolOffer> rideList = new ArrayList<>();
@@ -77,13 +80,13 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         getSupportFragmentManager().beginTransaction().add(R.id.fragment, fragment);
         final ListView list = (ListView) findViewById(R.id.rideslistview);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 RideInfoFragment frag = new RideInfoFragment();
                 TextView id = (TextView) view.findViewById(R.id.ride_id);
                 TextView did = (TextView) view.findViewById(R.id.driver_id);
-
                 EditText s = (EditText) findViewById(R.id.search_destinations);
                 Button b = (Button) findViewById(R.id.search_btn);
                 String idString = id.getText().toString();
@@ -112,6 +115,13 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         EditText s = (EditText) findViewById(R.id.search_destinations);
         Button b = (Button) findViewById(R.id.search_btn);
         if (list.getVisibility() != View.VISIBLE) {
+            getSupportActionBar().setTitle("Rides");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    getAllRides("");
+                }
+            }).start();
             list.setVisibility(View.VISIBLE);
             b.setVisibility(View.VISIBLE);
             s.setVisibility(View.VISIBLE);
@@ -189,8 +199,53 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
     }
 
     public void drawListView() {
-        ListView yourListView = (ListView) findViewById(R.id.rideslistview);
+        final ListView yourListView = (ListView) findViewById(R.id.rideslistview);
         RidesListAdapter customAdapter = new RidesListAdapter(this, R.layout.adapter_rides_listitem, rideList);
+        customAdapter.setRideListListener(new RidesListAdapter.rideListListener() {
+            @Override
+            public void editOffer(CarpoolOffer ride, String key) {
+                EditRideFragment frag = new EditRideFragment();
+                Bundle args = new Bundle();
+                String start = ride.getStartingPoint();
+                String dest = ride.getDestination();
+                String desc = ride.getDescription();
+                String dt = ride.getDeparture();
+                String month = dt.split("/")[0];
+                String day = dt.split(", ")[0].split("/")[1];
+                String hour = dt.split(", ")[1].split(":")[0];
+                String min = dt.split(", ")[1].split(":")[1].split(" ")[0];
+                String ampm = dt.split(" ")[2];
+                String rad = ride.getRadius();
+                String gen = ride.getGender();
+                String did = ride.getDriverId();
+                String rid = ride.getRiderId();
+                boolean rr = ride.getRiderRated();
+                boolean dr = ride.getDriverRated();
+                args.putString("start", start);
+                args.putString("dest", dest);
+                args.putString("desc", desc);
+                args.putString("month", month);
+                args.putString("day", day);
+                args.putString("hour", hour);
+                args.putString("min", min);
+                args.putString("ampm", ampm);
+                args.putString("rad", rad);
+                args.putString("gen", gen);
+                args.putString("rideKey", key);
+                args.putString("did", did);
+                args.putString("rid", rid);
+                args.putBoolean("rr", rr);
+                args.putBoolean("dr", dr);
+
+                getSupportActionBar().setTitle("Edit Carpool Offer");
+                frag.setArguments(args);
+                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                transaction.addToBackStack(null);
+                yourListView.setVisibility(View.GONE);
+                transaction.replace(R.id.fragment, frag).commit();
+            }
+        });
         yourListView.setAdapter(customAdapter);
     }
 
@@ -217,30 +272,35 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
 
     public double CalculationByDistance(final String loc) {
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        List<android.location.Address> addresses = null;
-        List<android.location.Address> myaddresses = null;
-        android.location.Address address = null;
-        android.location.Address myaddress = null;
+        final double[] valueResult = {10000};
 
-        double valueResult = 10000;
-        try {
-            myaddresses = geocoder.getFromLocationName(user.getAddress() + " " + user.getCity() + ", " + user.getState(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-            addresses = geocoder.getFromLocationName(loc, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<android.location.Address> addresses = null;
+                List<android.location.Address> myaddresses = null;
+                android.location.Address address = null;
+                android.location.Address myaddress = null;
 
-            if (addresses != null && addresses.size() > 0) {
-                address = addresses.get(0);
-            }
+                try {
+                    myaddresses = geocoder.getFromLocationName(user.getAddress() + " " + user.getCity() + ", " + user.getState(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                    addresses = geocoder.getFromLocationName(loc, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                    if (addresses != null && addresses.size() > 0) {
+                        address = addresses.get(0);
+                    }
 
-            if (myaddresses != null && myaddresses.size() > 0) {
-                myaddress = myaddresses.get(0);
+                    if (myaddresses != null && myaddresses.size() > 0) {
+                        myaddress = myaddresses.get(0);
+                    }
+                    if (address != null) {
+                        valueResult[0] = distance(myaddress.getLatitude(), address.getLatitude(), myaddress.getLongitude(), address.getLongitude());
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
-            if (address != null) {
-                valueResult = distance(myaddress.getLatitude(), address.getLatitude(), myaddress.getLongitude(), address.getLongitude());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return valueResult * 0.000621371;
+        }).start();
+        return valueResult[0] * 0.000621371;
     }
     public static double distance(double lat1, double lat2, double lon1,
                                   double lon2) {
@@ -258,5 +318,43 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         distance = Math.pow(distance, 2);
 
         return Math.sqrt(distance);
+    }
+
+    @Override
+    public void updateRide(String startingPoint, String destination, String description, String gender, String radius, String departure, String rideKey,
+                           String driverId, String riderId, boolean driverR, boolean riderR) {
+        CarpoolOffer ride = new CarpoolOffer();
+        ride.setStartingPoint(startingPoint);
+        ride.setDestination(destination);
+        ride.setDescription(description);
+        ride.setGender(gender);
+        ride.setRadius(radius);
+        ride.setDriverId(driverId);
+        ride.setRiderId(riderId);
+        ride.setDriverRated(driverR);
+        ride.setRiderRated(riderR);
+        ride.setDeparture(departure);
+
+        FirebaseDatabase.getInstance().getReference("rides").child(rideKey).setValue(ride).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(RidesActivity.this, "Carpool Offer Updated!", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void deleteRide(String key) {
+        FirebaseDatabase.getInstance().getReference("rides").child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(RidesActivity.this, "Carpool Offer Removed!", Toast.LENGTH_LONG).show();
+                getSupportFragmentManager().popBackStackImmediate();
+                getSupportActionBar().setTitle("Rides");
+                ListView list = (ListView) findViewById(R.id.rideslistview);
+                list.setVisibility(View.VISIBLE);
+                getAllRides("");
+            }
+        });
     }
 }

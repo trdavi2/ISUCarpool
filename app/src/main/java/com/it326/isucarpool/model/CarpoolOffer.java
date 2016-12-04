@@ -20,7 +20,6 @@ public class CarpoolOffer
 
     public CarpoolOffer()
     {
-        setRideId("");
         setRiderId("");
         setStartingPoint("");
         setDestination("");
