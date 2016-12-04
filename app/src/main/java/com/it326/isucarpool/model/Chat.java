@@ -32,7 +32,6 @@ public class Chat
         this.riderId = id;
     }
 
-
     public ArrayList<Message> getMessages() {
         return messages;
     }

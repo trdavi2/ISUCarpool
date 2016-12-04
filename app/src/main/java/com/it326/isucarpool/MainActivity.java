@@ -2,6 +2,10 @@ package com.it326.isucarpool;
 
 import android.*;
 import android.Manifest;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,14 +16,19 @@ import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.RemoteInput;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.NotificationCompat;
 import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -76,6 +85,7 @@ import java.util.List;
 
 import static com.it326.isucarpool.R.id.map;
 import static com.it326.isucarpool.R.id.profile_picture;
+import static com.it326.isucarpool.R.id.vibrate_setting;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, View.OnClickListener, CreateRideFragment.createRideFragmentListener  {
@@ -356,4 +366,49 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    /*@Override
+    public void onPause() {
+        super.onPause();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides").orderByKey().getRef();
+        ValueEventListener postListener1 = new ValueEventListener() {
+            int count = 0;
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                CarpoolOffer offer = null;
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    offer = child.getValue(CarpoolOffer.class);
+                }
+                if(count != 0) {
+                    triggerNotification(offer.getDestination() + "\n" + offer.getDeparture());
+                }
+                count++;
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        ref.addValueEventListener(postListener1);
+    }
+    public void triggerNotification(String message){
+        Intent resultIntent = new Intent(this, MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Notification.Builder mBuilder = new Notification.Builder(this)
+                .setStyle(new Notification.InboxStyle())
+                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setSound(alarmSound)
+                .setSmallIcon(R.drawable.messenger_bubble_large_white)
+                .setContentTitle("NEW RIDE!!!")
+                .setContentText(message)
+                .addAction(R.drawable.idp_button_background_email, "BUTTON", resultPendingIntent);
+
+        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(001, mBuilder.build());
+    }*/
 }

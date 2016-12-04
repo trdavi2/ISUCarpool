@@ -6,6 +6,16 @@
     android:paddingTop="5dp"
     android:orientation="horizontal">
     <TextView
+        android:id="@+id/rated"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+    <TextView
+        android:id="@+id/ride_id"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+    <TextView
         android:id="@+id/user_id"
         android:visibility="gone"
         android:layout_height="wrap_content"
@@ -41,13 +51,25 @@
                 android:textSize="16sp" />
         </TableRow>
         <TableRow>
-                <TextView
+            <LinearLayout
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:orientation="horizontal">
+            <TextView
                     android:id="@+id/current_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left"
                     android:textSize="16sp"
                     android:paddingRight="10dp"/>
+                <TextView
+                    android:id="@+id/your_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
         </TableRow>
     </TableLayout>
 </LinearLayout>
