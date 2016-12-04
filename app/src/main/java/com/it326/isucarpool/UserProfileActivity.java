@@ -264,7 +264,6 @@ public class UserProfileActivity extends AppCompatActivity {
             user.setAddress(addressText);
             user.setCity(cityText);
             user.setState(stateText);
-
             if(profilePicture != null) {
                 profilePicture.setDrawingCacheEnabled(true);
                 profilePicture.buildDrawingCache();

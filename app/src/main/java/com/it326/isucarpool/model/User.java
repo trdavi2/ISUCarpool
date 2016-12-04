@@ -15,11 +15,13 @@ public class User {
     private String address;
     private String city;
     private String state;
+    private boolean admin;
     private ArrayList<Chat> chatsList;
     private ArrayList<CarpoolOffer> carpoolOffers;
     //Whatever other attributes the User should have
 
     public User(){
+        setAdmin(false);
         setFirstName("");
         setLastName("");
         setEmail("");
@@ -31,7 +33,7 @@ public class User {
         setCarpoolOffers(new ArrayList<CarpoolOffer>());
     }
 
-    public User(String firstName, String lastName, String email, String gender, String address, String city, String state)
+    public User(String firstName, String lastName, String email, String gender, String address, String city, String state, boolean admin)
     {
         this.setFirstName(firstName);
         this.setLastName(lastName);
@@ -42,6 +44,8 @@ public class User {
         this.setState(state);
         this.setChatsList(new ArrayList<Chat>());
         this.setCarpoolOffers( new ArrayList<CarpoolOffer>());
+        this.setAdmin(admin);
+
     }
 
     public String getFirstName()
@@ -97,4 +101,8 @@ public class User {
     public ArrayList<CarpoolOffer> getCarpoolOffers() { return carpoolOffers; }
 
     public void setCarpoolOffers(ArrayList<CarpoolOffer> carpoolOffers) { this.carpoolOffers = carpoolOffers; }
+
+    public boolean getAdmin() { return admin; }
+
+    public void setAdmin(boolean admin) { this.admin = admin; }
 }

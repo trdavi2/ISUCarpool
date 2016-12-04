@@ -57,7 +57,7 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ChatFragment fragment = new ChatFragment();
-        getFragmentManager().beginTransaction().add(R.id.fragment_chat, fragment);
+        getSupportFragmentManager().beginTransaction().add(R.id.fragment_chat, fragment);
         //Set up Firebase
         chats = FirebaseDatabase.getInstance().getReference("chats");
         user = FirebaseAuth.getInstance().getCurrentUser();

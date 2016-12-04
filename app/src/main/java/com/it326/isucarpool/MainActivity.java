@@ -143,9 +143,14 @@ public class MainActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        loadUserInformation(navigationView);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadUserInformation(navigationView);
+            }
+        }).start();
         //Starting google map
         mapFragment = new SupportMapFragment();
         mapFragment.getMapAsync(this);
@@ -155,6 +160,7 @@ public class MainActivity extends AppCompatActivity
         end = (EditText) findViewById(R.id.endingLocation);
         but = (Button) findViewById(R.id.route);
         but.setOnClickListener(this);
+
     }
 
     public void loadProfilePicture(){
@@ -245,8 +251,14 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_settings) {
             intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
-
-        } else if (id == R.id.nav_logout) {
+        } else if (id == R.id.nav_admin_dashboard) {
+            if(user.getAdmin()) {
+                intent = new Intent(this, AdminDashboardActivity.class);
+                startActivity(intent);
+            } else Toast.makeText(getApplicationContext(), "Admin access only",
+                    Toast.LENGTH_LONG).show();
+        }
+        else if (id == R.id.nav_logout) {
             logout();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -268,6 +280,13 @@ public class MainActivity extends AppCompatActivity
                 txtName.setText(user.getFirstName() + " " + user.getLastName());
                 TextView txtEmail = (TextView) navigationView.getHeaderView(0).findViewById(R.id.email);
                 txtEmail.setText(user.getEmail());
+                Menu nav = navigationView.getMenu();
+                if(user.getAdmin()){
+                    nav.findItem(R.id.nav_admin_dashboard).setVisible(true);
+                }
+                else{
+                    nav.findItem(R.id.nav_admin_dashboard).setVisible(false);
+                }
 
             }
 

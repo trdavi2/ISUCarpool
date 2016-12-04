@@ -101,6 +101,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.it326.isucarpool.MainActivity" />
         </activity>
+
+        <activity
+            android:name=".AdminDashboardActivity"
+            android:label="Administrator"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.it326.isucarpool.MainActivity"/>
+        </activity>
     </application>
 
 </manifest>

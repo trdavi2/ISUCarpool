@@ -22,6 +22,9 @@
                 android:id="@+id/nav_settings"
                 android:title="@string/settings" />
             <item
+                android:id="@+id/nav_admin_dashboard"
+                android:title="Admin Dashboard" />
+            <item
                 android:id="@+id/nav_logout"
                 android:title="@string/sign_out" />
         </menu>

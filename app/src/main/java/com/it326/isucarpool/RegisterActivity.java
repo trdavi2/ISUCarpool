@@ -179,7 +179,7 @@ public class RegisterActivity extends AppCompatActivity
                         Toast.makeText(RegisterActivity.this, "Could not register", Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        User user = new User(firstNameText, lastNameText, emailText, fgenderText, addressText, cityText, stateText);
+                        User user = new User(firstNameText, lastNameText, emailText, fgenderText, addressText, cityText, stateText, false);
                         String uid = fb.getCurrentUser().getUid();
                         fb.getCurrentUser().sendEmailVerification();
                         FirebaseDatabase.getInstance().getReference("users").child(uid).child("profile").setValue(user);
