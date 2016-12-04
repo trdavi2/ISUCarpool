@@ -119,6 +119,8 @@ public class MessageFragment extends Fragment
                 rightMessage.setMargins(75, 5, 5, 5);
 
 
+
+
                 messageText.setText(model.getMessageText());
 
                 if(model.getMessageUser().equals(currUserId)) {
@@ -130,7 +132,7 @@ public class MessageFragment extends Fragment
                     messageText.setLayoutParams(rightMessage);
                     messageText.setGravity(Gravity.START);
                     messageText.setPaddingRelative(5, 5, 25, 5);
-                    messageText.setBackgroundColor(Color.BLUE);
+                    messageText.setBackgroundColor(Color.parseColor("#ce1126"));
                 }
 
 
