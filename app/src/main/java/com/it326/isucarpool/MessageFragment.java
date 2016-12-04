@@ -132,7 +132,7 @@ public class MessageFragment extends Fragment
                     messageText.setLayoutParams(rightMessage);
                     messageText.setGravity(Gravity.START);
                     messageText.setPaddingRelative(5, 5, 25, 5);
-                    messageText.setBackgroundColor(R.style.AppTheme.);
+                    messageText.setBackgroundColor(Color.parseColor("#ce1126"));
                 }
 
 
