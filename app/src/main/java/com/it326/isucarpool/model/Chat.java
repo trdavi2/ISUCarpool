@@ -1,6 +1,7 @@
 package com.it326.isucarpool.model;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Tim on 10/31/16.
@@ -8,19 +9,20 @@ import java.util.ArrayList;
 
 public class Chat
 {
-    private ArrayList<Message> messages;
+    //private ArrayList<Message> messages;
     private String riderId;
     private String driverId;
+    //private Map<String, Message> messages;
 
     public Chat()
     {
     }
 
-    public Chat(String input, String sriderId) {
-        this.setMessages(new ArrayList<Message>());
-        getMessages().add(new Message(input, sriderId));
+    public Chat(String sdriverId, String sriderId) {
+        //this.setMessages(new ArrayList<Message>());
+        //getMessages().add(new Message(input, sriderId));
         riderId = sriderId;
-        setDriverId("");
+        driverId = sdriverId;
     }
 
 
@@ -32,7 +34,7 @@ public class Chat
         this.riderId = id;
     }
 
-
+/*
     public ArrayList<Message> getMessages() {
         return messages;
     }
@@ -40,7 +42,7 @@ public class Chat
     public void setMessages(ArrayList<Message> messages) {
         this.messages = messages;
     }
-
+*/
     public String getDriverId() {
         return driverId;
     }
@@ -48,4 +50,12 @@ public class Chat
     public void setDriverId(String driverId) {
         this.driverId = driverId;
     }
+/*
+    public Map<String, Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Map<String, Message> messages) {
+        this.messages = messages;
+    }*/
 }
