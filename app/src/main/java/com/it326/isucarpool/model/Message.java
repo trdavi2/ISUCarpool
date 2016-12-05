@@ -10,8 +10,9 @@ public class Message
     private String messageUser;
     private long messageTime;
 
-    public Message(String messageText, String messageUser) {
+    public Message(String messageText, long messageTime, String messageUser) {
         this.setMessageText(messageText);
+        this.setMessageTime(messageTime);
         this.setMessageUser(messageUser);
     }
 

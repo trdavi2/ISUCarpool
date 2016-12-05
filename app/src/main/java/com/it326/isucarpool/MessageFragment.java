@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.it326.isucarpool.model.Chat;
 import com.it326.isucarpool.model.Message;
 
@@ -64,7 +65,7 @@ public class MessageFragment extends Fragment
         chatId = getArguments().getString("chatId");
         input = (EditText) v.findViewById(R.id.input);
 
-        messages = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages");
+        messages = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages").orderByChild("messageTime").getRef();
         messageList = (ListView) v.findViewById(R.id.list_of_messages);
         FirebaseDatabase.getInstance().getReference("chats").child(chatId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -90,7 +91,7 @@ public class MessageFragment extends Fragment
         send.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                messages.push().setValue(new Message(input.getText().toString(), currUserId));
+                messages.push().setValue(new Message(input.getText().toString(), System.currentTimeMillis(), currUserId));
                 input.setText("");
             }
         });
@@ -103,7 +104,6 @@ public class MessageFragment extends Fragment
 
         //final ListView messageList = (ListView) this.getActivity().findViewById(R.id.list_of_messages);
         adapter = new FirebaseListAdapter<Message>(this.getActivity(), Message.class, R.layout.message, messages) {
-
             @Override
             protected void populateView(View v, Message model, int position) {
                 //messageList = (ListView) v.findViewById(R.id.list_of_messages);
@@ -119,27 +119,32 @@ public class MessageFragment extends Fragment
                 rightMessage.setMargins(75, 5, 5, 5);
 
 
-*/              TextView messageText;
+*/              TextView messageTextl;
+                TextView messageTextr;
 
 
 
                 if(model.getMessageUser().equals(currUserId)) {
-                    messageText = (TextView) v.findViewById(R.id.message_text_r);
-                    messageText.setText(model.getMessageText());
-                    messageText.setGravity(Gravity.END);
+                    messageTextl = (TextView) v.findViewById(R.id.message_text_l);
+                    messageTextr = (TextView) v.findViewById(R.id.message_text_r);
+                    messageTextr.setText(model.getMessageText());
+                    messageTextr.setGravity(Gravity.END);
                     //messageText.setLayoutParams(rightMessage);
                     //messageText.s
                     //messageText.setPaddingRelative(75, 10, 15, 10);
-                    messageText.setBackgroundColor(Color.LTGRAY);
+                    messageTextr.setBackgroundColor(Color.LTGRAY);
+                    messageTextl.setVisibility(View.GONE);
+                    messageTextr.setVisibility(View.VISIBLE);
                 } else {
-                    messageText = (TextView) v.findViewById(R.id.message_text_l);
-                    messageText.setText(model.getMessageText());
+                    messageTextl = (TextView) v.findViewById(R.id.message_text_l);
+                    messageTextr = (TextView) v.findViewById(R.id.message_text_r);
+                    messageTextl.setText(model.getMessageText());
                     //messageText.setPaddingRelative(15, 10, 25, 10);
-                    messageText.setBackgroundColor(Color.parseColor("#ce1126"));
-                    messageText.setTextColor(Color.WHITE);
+                    messageTextl.setBackgroundColor(Color.parseColor("#ce1126"));
+                    messageTextl.setTextColor(Color.WHITE);
+                    messageTextl.setVisibility(View.VISIBLE);
+                    messageTextr.setVisibility(View.GONE);
                 }
-
-
 
                 // Set their text
                 //ArrayList<Message> chatMessage = model;
@@ -154,6 +159,7 @@ public class MessageFragment extends Fragment
 
         };
         messageList.setAdapter(adapter);
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
