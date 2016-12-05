@@ -53,6 +53,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.facebook.share.model.ShareLinkContent;
+import com.facebook.share.widget.MessageDialog;
+import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -98,7 +104,13 @@ public class MainActivity extends AppCompatActivity
     private SupportMapFragment mapFragment;
     private FirebaseAuth fb;
     private static Bitmap profilePic;
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
 
+    }
+    CallbackManager callbackManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,7 +123,6 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if(!start.getText().toString().equals("") && !end.getText().toString().equals("")) {
                     getSupportActionBar().setTitle("Create Ride Offer");
                     CreateRideFragment frag = new CreateRideFragment();

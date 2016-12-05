@@ -48,6 +48,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.it326.isucarpool.model.CarpoolOffer;
+import com.it326.isucarpool.model.Chat;
 import com.it326.isucarpool.model.User;
 
 import java.io.IOException;
@@ -80,7 +81,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         getSupportFragmentManager().beginTransaction().add(R.id.fragment, fragment);
         final ListView list = (ListView) findViewById(R.id.rideslistview);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
+        list.setVisibility(View.VISIBLE);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -102,7 +103,6 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 b.setVisibility(View.GONE);
                 s.setVisibility(View.GONE);
                 transaction.replace(R.id.fragment, frag).commit();
-
             }
         });
 
@@ -261,13 +261,15 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
     }
 
     @Override
-    public void requestRide() {
-        System.out.println("YOU ARE TRYING TO REQUEST A RIDE");
-    }
-
-    @Override
-    public void sendChat() {
-        System.out.println("YOU ARE TRYING TO SEND A CHAT");
+    public void requestChat(String driverId) {
+        Chat chat = new Chat(driverId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("chats");
+        ref.push().setValue(chat).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(RidesActivity.this, "Request Sent!", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public double CalculationByDistance(final String loc) {

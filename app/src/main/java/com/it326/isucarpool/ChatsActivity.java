@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.support.v4.app.FragmentTransaction;
+import android.widget.Toast;
 
 import com.google.android.gms.fitness.data.Value;
 import com.google.firebase.auth.FirebaseAuth;
@@ -75,12 +76,14 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                MessageFragment messageFragment = new MessageFragment();
-                Bundle args = new Bundle();
-                args.putString("chatId", chatId.get(i));
-                messageFragment.setArguments(args);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_chat, messageFragment).commit();
-                list.setVisibility(View.GONE);
+                if (chatList.get(i).getMessages() != null){
+                    MessageFragment messageFragment = new MessageFragment();
+                    Bundle args = new Bundle();
+                    args.putString("chatId", chatId.get(i));
+                    messageFragment.setArguments(args);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_chat, messageFragment).commit();
+                    list.setVisibility(View.GONE);
+                }
             }
         });
     }
@@ -106,12 +109,26 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         };
-        ref.addListenerForSingleValueEvent(postListener1);
+        ref.addValueEventListener(postListener1);
     }
 
     public void drawListView() {
         ListView yourListView = (ListView) findViewById(R.id.list_of_chats);
-        ChatListAdapter customAdapter = new ChatListAdapter(this, R.layout.chat, chatList, chatId);
+        final ChatListAdapter customAdapter = new ChatListAdapter(this, R.layout.chat, chatList, chatId);
+        customAdapter.setChatListListener(new ChatListAdapter.chatListListener() {
+            @Override
+            public void acceptDeny(Chat chat, String key, int accDeny) {
+                if(accDeny == 1){
+                    FirebaseDatabase.getInstance().getReference().child("chats").child(key).child("messages").push().setValue(new Message("ACCEPTED", System.currentTimeMillis(), FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                    Toast.makeText(ChatsActivity.this, "Chat Accepted!", Toast.LENGTH_LONG).show();
+
+                }
+                else{
+                    FirebaseDatabase.getInstance().getReference().child("chats").child(key).removeValue();
+                    Toast.makeText(ChatsActivity.this, "Chat Denied!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         yourListView.setAdapter(customAdapter);
     }
 

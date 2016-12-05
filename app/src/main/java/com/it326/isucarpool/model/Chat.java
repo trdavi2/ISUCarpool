@@ -12,7 +12,7 @@ public class Chat
 
     private String riderId;
     private String driverId;
-    //private Map<String, Message> messages;
+    private Map<String, Message> messages;
 
     public Chat()
     {
@@ -33,6 +33,13 @@ public class Chat
         this.riderId = id;
     }
 
+    public Map<String, Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Map<String, Message> messages) {
+        this.messages = messages;
+    }
 
     public String getDriverId() {
         return driverId;

@@ -33,12 +33,12 @@ public class RideInfoFragment extends Fragment {
 
 
     interface rideInfoFragmentListener {
-        void requestRide();
-        void sendChat();
+        void requestChat(String driverId);
     }
     rideInfoFragmentListener listener;
 
     private String rideId;
+    private String driverId;
     private CarpoolOffer offer;
 
     public RideInfoFragment() {
@@ -65,18 +65,11 @@ public class RideInfoFragment extends Fragment {
         getRideData(rideId, v);
         loadProfilePicture(getArguments().getString("userId"), v);
         Button request = (Button) v.findViewById(R.id.request_ride);
-        final Button sendChat = (Button) v.findViewById(R.id.send_chat);
 
         request.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestRide(view);
-            }
-        });
-        sendChat.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sendChat(view);
+                requestChat(view);
             }
         });
 
@@ -131,6 +124,7 @@ public class RideInfoFragment extends Fragment {
                 TextView dept = (TextView) v.findViewById(R.id.ride_departure);
                 TextView gender = (TextView) v.findViewById(R.id.ride_gender);
                 TextView desc = (TextView) v.findViewById(R.id.ride_desc);
+                driverId = offer.getDriverId();
                 getDriverInfo(offer.getDriverId(), drive, gender);
                 destin.setText(Html.fromHtml("<b>" + "Destination: " + "</b>" + offer.getDestination()));
                 startLoc.setText(Html.fromHtml("<b>" + "Starting Location: " + "</b>" + offer.getStartingPoint()));
@@ -155,9 +149,7 @@ public class RideInfoFragment extends Fragment {
                 String driver = user.getFirstName() + " " + user.getLastName();
                 tv.setText(driver);
                 gen.setText(Html.fromHtml("<b>" + "Gender: " + "</b>" + user.getGender()));
-
             }
-
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -167,14 +159,9 @@ public class RideInfoFragment extends Fragment {
 
         ref.addValueEventListener(postListener);
     }
-    public void requestRide(View view) {
+    public void requestChat(View view) {
         if(listener != null){
-            listener.requestRide();
-        }
-    }
-    public void sendChat(View view) {
-        if(listener != null){
-            listener.sendChat();
+            listener.requestChat(driverId);
         }
     }
 }

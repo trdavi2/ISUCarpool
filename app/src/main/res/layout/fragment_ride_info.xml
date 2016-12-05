@@ -107,10 +107,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:id="@+id/request_ride"
-        android:text="Request a Ride"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/send_chat"
-        android:text="Send Chat"/>
+        android:text="Request Chat"/>
+
 </LinearLayout>

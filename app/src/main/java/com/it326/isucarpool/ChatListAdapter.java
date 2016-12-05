@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -12,6 +13,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.Chat;
 import com.it326.isucarpool.model.User;
 
@@ -22,7 +24,10 @@ import java.util.List;
  */
 public class ChatListAdapter extends ArrayAdapter<Chat>
 {
-
+    public interface chatListListener{
+        void acceptDeny(Chat chat, String key, int accDeny);
+    }
+    chatListListener listener;
     private List<String> chatId;
     private String otherUser;
 
@@ -36,7 +41,7 @@ public class ChatListAdapter extends ArrayAdapter<Chat>
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
 
         View v = convertView;
 
@@ -45,11 +50,50 @@ public class ChatListAdapter extends ArrayAdapter<Chat>
             vi = LayoutInflater.from(getContext());
             v = vi.inflate(R.layout.chat, null);
         }
-
         final Chat chat = getItem(position);
+        final String[] key = {""};
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("chats");
+        final View finalV1 = v;
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    Chat c = child.getValue(Chat.class);
+                    if(chat.getDriverId().equals(c.getDriverId()) && chat.getRiderId().equals(c.getRiderId())){
+                        key[0] = child.getKey();
+                    }
+                }
+                if(chat.getMessages() == null && chat.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                    Button a = (Button) finalV1.findViewById(R.id.acc_btn);
+                    Button d = (Button) finalV1.findViewById(R.id.deny_btn);
+                    a.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            acceptDeny(chat, key[0], 1);
+                        }
+                    });
+                    d.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            acceptDeny(chat, key[0], 0);
+                        }
+                    });
+                    a.setVisibility(View.VISIBLE);
+                    d.setVisibility(View.VISIBLE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         String currentId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         String otherUserId;
-        if(currentId.equals(chat.getDriverId())) otherUserId = chat.getRiderId();
+
+        if (currentId.equals(chat.getDriverId())) otherUserId = chat.getRiderId();
         else otherUserId = chat.getDriverId();
         final View chatUserView = convertView;
         if (chat != null) {
@@ -58,9 +102,10 @@ public class ChatListAdapter extends ArrayAdapter<Chat>
             ValueEventListener valListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    User user = (User) dataSnapshot.getValue(User.class);
-                    ((TextView)finalV.findViewById(R.id.message_user)).setText(user.getFirstName() + " " + user.getLastName());
+                    User user = dataSnapshot.getValue(User.class);
+                    ((TextView) finalV.findViewById(R.id.message_user)).setText(user.getFirstName() + " " + user.getLastName());
                 }
+
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
 
@@ -68,6 +113,8 @@ public class ChatListAdapter extends ArrayAdapter<Chat>
             };
             ref.addValueEventListener(valListener);
         }
+
+
         return v;
     }
 
@@ -78,4 +125,14 @@ public class ChatListAdapter extends ArrayAdapter<Chat>
     public void setOtherUser(String otherUser) {
         this.otherUser = otherUser;
     }
+
+    public void acceptDeny(Chat chat, String key, int accDeny) {
+        if(listener != null){
+            listener.acceptDeny(chat, key, accDeny);
+        }
+    }
+    public void setChatListListener(chatListListener listener){
+        this.listener = listener;
+    }
+
 }

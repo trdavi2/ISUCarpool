@@ -1,10 +1,16 @@
 package com.it326.isucarpool;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -22,6 +28,7 @@ import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -104,6 +111,7 @@ public class MessageFragment extends Fragment
 
         //final ListView messageList = (ListView) this.getActivity().findViewById(R.id.list_of_messages);
         adapter = new FirebaseListAdapter<Message>(this.getActivity(), Message.class, R.layout.message, messages) {
+
             @Override
             protected void populateView(View v, Message model, int position) {
                 //messageList = (ListView) v.findViewById(R.id.list_of_messages);
@@ -117,12 +125,8 @@ public class MessageFragment extends Fragment
                 leftMessage.setMargins(5, 5, 75, 5);
                 LayoutParams rightMessage = (RelativeLayout.LayoutParams) messageText.getLayoutParams();
                 rightMessage.setMargins(75, 5, 5, 5);
-
-
 */              TextView messageTextl;
                 TextView messageTextr;
-
-
 
                 if(model.getMessageUser().equals(currUserId)) {
                     messageTextl = (TextView) v.findViewById(R.id.message_text_l);
@@ -145,7 +149,11 @@ public class MessageFragment extends Fragment
                     messageTextl.setVisibility(View.VISIBLE);
                     messageTextr.setVisibility(View.GONE);
                 }
-
+                /*if(prevCount < adapter.getCount()){
+                    Message m = adapter.getItem(getCount()-1);
+                    triggerNotification(m.getMessageText());
+                }
+                prevCount = adapter.getCount();*/
                 // Set their text
                 //ArrayList<Message> chatMessage = model;
                 // Message lastMessage = chatMessages.get(chatMessages.size() - 1);
@@ -160,6 +168,27 @@ public class MessageFragment extends Fragment
         };
         messageList.setAdapter(adapter);
 
+    }
+
+    public void triggerNotification(String message){
+        Intent resultIntent = new Intent(this.getActivity(), ChatsActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getActivity());
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        Notification.Builder mBuilder = new Notification.Builder(this.getActivity())
+                .setStyle(new Notification.InboxStyle())
+                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setSound(alarmSound)
+                .setSmallIcon(R.drawable.messenger_bubble_large_white)
+                .setContentTitle("NEW RIDE!!!")
+                .setContentText(message)
+                .addAction(R.drawable.idp_button_background_email, "BUTTON", resultPendingIntent);
+
+        NotificationManager mNotificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(001, mBuilder.build());
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -179,6 +208,45 @@ public class MessageFragment extends Fragment
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
+    /*@Override
+    public void onPause() {
+        super.onPause();
+        FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages").orderByChild("messageTime").getRef().addChildEventListener(new ChildEventListener() {
+            long prevCount = 0;
+            int count = 0;
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                //triggerNotification(dataSnapshot.getValue(Message.class).getMessageText());
+                long count = dataSnapshot.getChildrenCount();
+                if (prevCount < count) {
+                    Message m = dataSnapshot.getValue(Message.class);
+                    triggerNotification(m.getMessageText());
+                }
+                prevCount = count;
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }*/
 
     @Override
     public void onDetach() {

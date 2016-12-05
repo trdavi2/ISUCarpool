@@ -24,8 +24,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true">
+        android:largeHeap="true"
+        android:theme="@style/AppTheme">
         <activity
             android:name=".RegisterActivity"
             android:label="Register"
@@ -43,7 +43,7 @@
         <activity
             android:name=".ChatsActivity"
             android:label="Chat"
-            android:theme="@style/AppTheme"/>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -101,16 +101,16 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.it326.isucarpool.MainActivity" />
         </activity>
-
         <activity
             android:name=".AdminDashboardActivity"
             android:label="Administrator"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.it326.isucarpool.MainActivity"/>
+                android:value="com.it326.isucarpool.MainActivity" />
         </activity>
+
     </application>
 
 </manifest>
