@@ -448,7 +448,7 @@ public class MainActivity extends AppCompatActivity
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     offer = child.getValue(CarpoolOffer.class);
                 }
-                if(count3 > 0 && offer.getDriverId() != FirebaseAuth.getInstance().getCurrentUser().getUid()) {
+                if(count3 > 0 && !offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) && !offer.getRiderRated() && !offer.getDriverRated()) {
                     triggerNotification("New ride offer!", offer.getDestination() + "\n" + offer.getDeparture(), count3);
                     count3 = 0;
                 }
@@ -470,7 +470,7 @@ public class MainActivity extends AppCompatActivity
         boolean rideS = SettingsActivity.getRide();
         boolean vibeS = SettingsActivity.getVibe();
 
-        if((rideS && title.equals("New ride offer!"))|| (chatS && title.equals("New Message!"))) {
+        if((rideS && title.equals("New ride offer!")) || (chatS && title.equals("New Message!"))) {
             PendingIntent pendingIntent;
             if (title.equals("New ride offer!")) {
                 stackBuilder.addParentStack(MainActivity.class);

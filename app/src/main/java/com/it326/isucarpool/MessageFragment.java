@@ -99,16 +99,16 @@ public class MessageFragment extends Fragment
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         CarpoolOffer ride = dataSnapshot.getValue(CarpoolOffer.class);
-                        if(ride.getRiderId().equals("")){
-                            if(!currChat.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        if (ride != null){
+                            if (ride.getRiderId().equals("")) {
+                                if (!currChat.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    acc.setVisibility(View.GONE);
+                                } else {
+                                    acc.setVisibility(View.VISIBLE);
+                                }
+                            } else {
                                 acc.setVisibility(View.GONE);
                             }
-                            else{
-                                acc.setVisibility(View.VISIBLE);
-                            }
-                        }
-                        else{
-                            acc.setVisibility(View.GONE);
                         }
                     }
 

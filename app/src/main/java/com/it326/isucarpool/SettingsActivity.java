@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -33,9 +34,9 @@ public class SettingsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Switch rideS = (Switch) findViewById(R.id.notify_ride);
-        Switch chatS = (Switch) findViewById(R.id.notify_chat);
-        Switch vibrate = (Switch) findViewById(R.id.vibrate);
+        final Switch rideS = (Switch) findViewById(R.id.notify_ride);
+        final Switch chatS = (Switch) findViewById(R.id.notify_chat);
+        final Switch vibrate = (Switch) findViewById(R.id.vibrate);
 
         SharedPreferences settings = getSharedPreferences("myPref", 0);
         chat = settings.getBoolean("recieveChat", true);
@@ -45,14 +46,36 @@ public class SettingsActivity extends AppCompatActivity {
         vibe = settings.getBoolean("vibrate", false);
         vibrate.setChecked(vibe);
 
+        chatS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                SharedPreferences settings = getSharedPreferences("myPref", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("recieveChat", chatS.isChecked());
+            }
+        });
+        rideS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                SharedPreferences settings = getSharedPreferences("myPref", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("recieveRide", rideS.isChecked());
+            }
+        });
+        vibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                SharedPreferences settings = getSharedPreferences("myPref", 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("vibrate", vibrate.isChecked());
+            }
+        });
+
 
     }
     @Override
     protected void onStop(){
         super.onStop();
-
-        // We need an Editor object to make preference changes.
-        // All objects are from android.context.Context
         SharedPreferences settings = getSharedPreferences("myPref", 0);
         SharedPreferences.Editor editor = settings.edit();
         Switch rideS = (Switch) findViewById(R.id.notify_ride);
