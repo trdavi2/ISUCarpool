@@ -39,8 +39,11 @@ public class SettingsActivity extends AppCompatActivity {
 
         SharedPreferences settings = getSharedPreferences("myPref", 0);
         chat = settings.getBoolean("recieveChat", true);
-        ride = settings.getBoolean("recieveRide", true);
+        chatS.setChecked(chat);
+        ride = settings.getBoolean("recieveRide", false);
+        rideS.setChecked(ride);
         vibe = settings.getBoolean("vibrate", false);
+        vibrate.setChecked(vibe);
 
 
     }

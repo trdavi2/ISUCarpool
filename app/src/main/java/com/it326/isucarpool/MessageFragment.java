@@ -41,6 +41,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.Chat;
 import com.it326.isucarpool.model.Message;
 import com.it326.isucarpool.model.Report;
@@ -94,11 +95,11 @@ public class MessageFragment extends Fragment
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currChat = dataSnapshot.getValue(Chat.class);
-                FirebaseDatabase.getInstance().getReference("rides").child(rideId).child("riderId").addValueEventListener(new ValueEventListener() {
+                FirebaseDatabase.getInstance().getReference("rides").child(rideId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        String ride = dataSnapshot.getValue(String.class);
-                        if(ride == null){
+                        CarpoolOffer ride = dataSnapshot.getValue(CarpoolOffer.class);
+                        if(ride.getRiderId().equals("")){
                             if(!currChat.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                 acc.setVisibility(View.GONE);
                             }
