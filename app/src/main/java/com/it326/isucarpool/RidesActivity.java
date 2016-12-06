@@ -163,26 +163,26 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                             e.printStackTrace();
                         }
                         if (convertedDate.after(current)) {
-                            if(offer.getRiderId().equals("")) {
-                                if ((start < rad || dest < rad) && search.equals("")) {
-                                    if (offer.getGender().equals("Males") && user.getGender() == "Male") {
+                            if(offer.getRiderId().equals("") || offer.getRiderId() == null) {
+                                if (((start < rad || dest < rad) && search.equals("")) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    if ((offer.getGender().equals("Males") && user.getGender().equals("Male")) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
                                         drawListView();
-                                    } else if (offer.getGender().equals("Females") && user.getGender() == "Female") {
+                                    } else if ((offer.getGender().equals("Females") && user.getGender().equals("Female")) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
                                         drawListView();
-                                    } else if (offer.getGender().equals("Males, Females")) {
+                                    } else if (offer.getGender().equals("Males, Females") || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
                                         drawListView();
                                     }
                                 } else if ((start < rad || dest < rad) && !search.equals("")) {
-                                    if (offer.getGender().equals("Males") && user.getGender() == "Male" && offer.getDestination().contains(search)) {
+                                    if ((offer.getGender().equals("Males") && user.getGender().equals("Male") && offer.getDestination().contains(search))) {
                                         rideList.add(offer);
                                         drawListView();
-                                    } else if (offer.getGender().equals("Females") && user.getGender() == "Female" && offer.getDestination().contains(search)) {
+                                    } else if ((offer.getGender().equals("Females") && user.getGender().equals("Female") && offer.getDestination().contains(search)) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
                                         drawListView();
-                                    } else if (offer.getGender().equals("Males, Females") && offer.getDestination().contains(search)) {
+                                    } else if ((offer.getGender().equals("Males, Females") && offer.getDestination().contains(search)) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
                                         drawListView();
                                     }
@@ -265,6 +265,8 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
 
     @Override
     public void requestChat(String driverId, String rideId) {
+        MainActivity.setCount1(0);
+        MainActivity.setCount2(0);
         Chat chat = new Chat(driverId, FirebaseAuth.getInstance().getCurrentUser().getUid(), rideId);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("chats");
         ref.push().setValue(chat).addOnCompleteListener(new OnCompleteListener<Void>() {

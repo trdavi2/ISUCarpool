@@ -417,15 +417,16 @@ public class MainActivity extends AppCompatActivity
             ArrayList<Chat> newChat = new ArrayList<Chat>();
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Chat chat;
+                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                Chat chat = null;
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     chat = child.getValue(Chat.class);
-                    if(chat.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                    if(chat.getDriverId().equals(uid)){
                         newChat.add(chat);
                     }
                 }
-                if(count1 < newChat.size() && count2 > 0) {
-                    triggerNotification("New chat request!", "", count1);
+                if(count1 < newChat.size() && count2 > 0 && (chat.getRiderId().equals(uid) || chat.getDriverId().equals(uid))) {
+                    triggerNotification("New Message!", "", count1);
                 }
                 count1 = newChat.size();
                 count2++;
@@ -449,6 +450,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 if(count3 > 0 && offer.getDriverId() != FirebaseAuth.getInstance().getCurrentUser().getUid()) {
                     triggerNotification("New ride offer!", offer.getDestination() + "\n" + offer.getDeparture(), count3);
+                    count3 = 0;
                 }
                 count3++;
             }
@@ -468,7 +470,7 @@ public class MainActivity extends AppCompatActivity
         boolean rideS = SettingsActivity.getRide();
         boolean vibeS = SettingsActivity.getVibe();
 
-        if((rideS && title.equals("New ride offer!"))|| (chatS && title.equals("New chat request!"))) {
+        if((rideS && title.equals("New ride offer!"))|| (chatS && title.equals("New Message!"))) {
             PendingIntent pendingIntent;
             if (title.equals("New ride offer!")) {
                 stackBuilder.addParentStack(MainActivity.class);
