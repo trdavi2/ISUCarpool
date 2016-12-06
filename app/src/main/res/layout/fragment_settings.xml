@@ -8,32 +8,20 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
         <Switch
-            android:id="@+id/notifications_Setting"
+            android:id="@+id/notify_ride"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/notifications"
+            android:text="Notify new rides"
             android:padding="16dp"
             android:checked="true" />
         <Switch
-            android:id="@+id/notifyDriverNear"
+            android:id="@+id/notify_chat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/driver_near_notification"
+            android:text="Notify new chat requests"
             android:padding="16dp" />
         <Switch
-            android:id="@+id/notifyRiderNear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/rider_near_notification"
-            android:padding="16dp" />
-        <Switch
-            android:id="@+id/sound_setting"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/sound"
-            android:padding="16dp" />
-        <Switch
-            android:id="@+id/vibrate_setting"
+            android:id="@+id/vibrate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/vibrate"

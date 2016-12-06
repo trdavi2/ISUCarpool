@@ -83,6 +83,7 @@ import com.it326.isucarpool.LoginActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.it326.isucarpool.model.CarpoolOffer;
+import com.it326.isucarpool.model.Chat;
 import com.it326.isucarpool.model.User;
 
 import java.io.IOException;
@@ -91,7 +92,6 @@ import java.util.List;
 
 import static com.it326.isucarpool.R.id.map;
 import static com.it326.isucarpool.R.id.profile_picture;
-import static com.it326.isucarpool.R.id.vibrate_setting;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, View.OnClickListener, CreateRideFragment.createRideFragmentListener  {
@@ -312,10 +312,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
-       /* map.setMyLocationEnabled(true);
-        LocationManager service = (LocationManager)
-
-                getSystemService(LOCATION_SERVICE);
+        map.setMyLocationEnabled(true);
+        LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         String provider = service.getBestProvider(criteria, false);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -323,8 +321,7 @@ public class MainActivity extends AppCompatActivity
         }
         Location location = service.getLastKnownLocation(provider);
         LatLng userLocation = new LatLng(location.getLatitude(),location.getLongitude());
-        map.addMarker(new MarkerOptions().position(userLocation).title("Marker at my location"));
-        map.moveCamera(CameraUpdateFactory.newLatLng(userLocation));*/
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 5.0f));
     }
 
     @Override
@@ -395,22 +392,65 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    /*@Override
+    private static int count1 = 0;
+    private static int count2 = 0;
+    private static int count3 = 0;
+
+    public static void setCount1(int count){
+        count1 = count;
+    }
+    public static void setCount2(int count){
+        count2 = count;
+    }
+    public static void setCount3(int count){
+        count3 = count;
+    }
+    @Override
     public void onPause() {
         super.onPause();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides").orderByKey().getRef();
+        count1 = 0;
+        count2 = 0;
+        count3 = 0;
+        DatabaseReference refchat = FirebaseDatabase.getInstance().getReference("chats");
         ValueEventListener postListener1 = new ValueEventListener() {
-            int count = 0;
+
+            ArrayList<Chat> newChat = new ArrayList<Chat>();
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Chat chat;
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    chat = child.getValue(Chat.class);
+                    if(chat.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                        newChat.add(chat);
+                    }
+                }
+                if(count1 < newChat.size() && count2 > 0) {
+                    triggerNotification("New chat request!", "", count1);
+                }
+                count1 = newChat.size();
+                count2++;
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        refchat.addValueEventListener(postListener1);
+
+
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides").orderByKey().getRef();
+        ValueEventListener postListener2 = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 CarpoolOffer offer = null;
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     offer = child.getValue(CarpoolOffer.class);
                 }
-                if(count != 0) {
-                    triggerNotification(offer.getDestination() + "\n" + offer.getDeparture());
+                if(count3 > 0 && offer.getDriverId() != FirebaseAuth.getInstance().getCurrentUser().getUid()) {
+                    triggerNotification("New ride offer!", offer.getDestination() + "\n" + offer.getDeparture(), count3);
                 }
-                count++;
+                count3++;
             }
 
             @Override
@@ -418,28 +458,46 @@ public class MainActivity extends AppCompatActivity
                 Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
             }
         };
-        ref.addValueEventListener(postListener1);
+        ref.addValueEventListener(postListener2);
     }
-    public void triggerNotification(String message){
-        Intent resultIntent = new Intent(this, MainActivity.class);
+    public void triggerNotification(String title, String message, int num){
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Notification.Builder mBuilder = new Notification.Builder(this)
-                .setStyle(new Notification.InboxStyle())
-                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setSound(alarmSound)
-                .setSmallIcon(R.drawable.messenger_bubble_large_white)
-                .setContentTitle("NEW RIDE!!!")
-                .setContentText(message)
-                .addAction(R.drawable.idp_button_background_email, "BUTTON", resultPendingIntent);
+        Intent resultIntent1 = new Intent(this, RidesActivity.class);
+        Intent resultIntent2 = new Intent(this, ChatsActivity.class);
+        boolean chatS = SettingsActivity.getChat();
+        boolean rideS = SettingsActivity.getRide();
+        boolean vibeS = SettingsActivity.getVibe();
 
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(001, mBuilder.build());
-    }*/
+        if((rideS && title.equals("New ride offer!"))|| (chatS && title.equals("New chat request!"))) {
+            PendingIntent pendingIntent;
+            if (title.equals("New ride offer!")) {
+                stackBuilder.addParentStack(MainActivity.class);
+                stackBuilder.addNextIntent(resultIntent1);
+                pendingIntent = PendingIntent.getActivity(this, 0, resultIntent1, PendingIntent.FLAG_UPDATE_CURRENT);
+            } else {
+                stackBuilder.addParentStack(MainActivity.class);
+                stackBuilder.addNextIntent(resultIntent2);
+                pendingIntent = PendingIntent.getActivity(this, 0, resultIntent2, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Notification.Builder mBuilder = new Notification.Builder(this)
+                    .setAutoCancel(true)
+                    .setStyle(new Notification.InboxStyle())
+                    .setContentIntent(pendingIntent)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setSound(alarmSound)
+                    .setSmallIcon(R.mipmap.ic_launcher)
+                    .setContentTitle(title)
+                    .setContentText(message);
+            if(vibeS) {
+                mBuilder.setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 });
+            }
+            //.addAction(R.drawable.idp_button_background_email, "BUTTON", resultPendingIntent);
+
+            NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(num, mBuilder.build());
+        }
+    }
 
     public void logout()
     {

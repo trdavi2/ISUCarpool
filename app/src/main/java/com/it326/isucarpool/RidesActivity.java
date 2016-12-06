@@ -134,6 +134,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         ValueEventListener postListener1 = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                MainActivity.setCount3(0);
                 rideList.clear();
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     String key = child.getKey();
@@ -162,27 +163,29 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                             e.printStackTrace();
                         }
                         if (convertedDate.after(current)) {
-                            if ((start < rad || dest < rad) && search.equals("")) {
-                                if (offer.getGender().equals("Males") && user.getGender() == "Male") {
-                                    rideList.add(offer);
-                                    drawListView();
-                                } else if (offer.getGender().equals("Females") && user.getGender() == "Female") {
-                                    rideList.add(offer);
-                                    drawListView();
-                                } else if (offer.getGender().equals("Males, Females")) {
-                                    rideList.add(offer);
-                                    drawListView();
-                                }
-                            } else if ((start < rad || dest < rad) && !search.equals("")) {
-                                if (offer.getGender().equals("Males") && user.getGender() == "Male" && offer.getDestination().contains(search)) {
-                                    rideList.add(offer);
-                                    drawListView();
-                                } else if (offer.getGender().equals("Females") && user.getGender() == "Female" && offer.getDestination().contains(search)) {
-                                    rideList.add(offer);
-                                    drawListView();
-                                } else if (offer.getGender().equals("Males, Females") && offer.getDestination().contains(search)) {
-                                    rideList.add(offer);
-                                    drawListView();
+                            if(offer.getRiderId().equals("")) {
+                                if ((start < rad || dest < rad) && search.equals("")) {
+                                    if (offer.getGender().equals("Males") && user.getGender() == "Male") {
+                                        rideList.add(offer);
+                                        drawListView();
+                                    } else if (offer.getGender().equals("Females") && user.getGender() == "Female") {
+                                        rideList.add(offer);
+                                        drawListView();
+                                    } else if (offer.getGender().equals("Males, Females")) {
+                                        rideList.add(offer);
+                                        drawListView();
+                                    }
+                                } else if ((start < rad || dest < rad) && !search.equals("")) {
+                                    if (offer.getGender().equals("Males") && user.getGender() == "Male" && offer.getDestination().contains(search)) {
+                                        rideList.add(offer);
+                                        drawListView();
+                                    } else if (offer.getGender().equals("Females") && user.getGender() == "Female" && offer.getDestination().contains(search)) {
+                                        rideList.add(offer);
+                                        drawListView();
+                                    } else if (offer.getGender().equals("Males, Females") && offer.getDestination().contains(search)) {
+                                        rideList.add(offer);
+                                        drawListView();
+                                    }
                                 }
                             }
                         }
@@ -285,8 +288,8 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 android.location.Address myaddress = null;
 
                 try {
-                    myaddresses = geocoder.getFromLocationName(user.getAddress() + " " + user.getCity() + ", " + user.getState(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                    addresses = geocoder.getFromLocationName(loc, 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                    myaddresses = geocoder.getFromLocationName(user.getAddress() + " " + user.getCity() + ", " + user.getState(), 1);
+                    addresses = geocoder.getFromLocationName(loc, 1);
                     if (addresses != null && addresses.size() > 0) {
                         address = addresses.get(0);
                     }
@@ -336,6 +339,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         ride.setDriverRated(driverR);
         ride.setRiderRated(riderR);
         ride.setDeparture(departure);
+        MainActivity.setCount3(0);
 
         FirebaseDatabase.getInstance().getReference("rides").child(rideKey).setValue(ride).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

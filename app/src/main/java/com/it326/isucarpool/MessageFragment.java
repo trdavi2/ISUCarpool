@@ -74,11 +74,19 @@ public class MessageFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_message, container, false);
-        // Inflate the layout for this fragmen
         setHasOptionsMenu(true);
         currUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String rideId = getArguments().getString("rideId");
+
         chatId = getArguments().getString("chatId");
         input = (EditText) v.findViewById(R.id.input);
+        final Button acc = (Button) v.findViewById(R.id.acc_ride);
+        acc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseDatabase.getInstance().getReference("rides").child(rideId).child("riderId").setValue(currChat.getRiderId());
+            }
+        });
 
         messages = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages").orderByChild("messageTime").getRef();
         messageList = (ListView) v.findViewById(R.id.list_of_messages);
@@ -86,6 +94,28 @@ public class MessageFragment extends Fragment
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currChat = dataSnapshot.getValue(Chat.class);
+                FirebaseDatabase.getInstance().getReference("rides").child(rideId).child("riderId").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String ride = dataSnapshot.getValue(String.class);
+                        if(ride == null){
+                            if(!currChat.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                acc.setVisibility(View.GONE);
+                            }
+                            else{
+                                acc.setVisibility(View.VISIBLE);
+                            }
+                        }
+                        else{
+                            acc.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
 
             @Override
@@ -93,7 +123,13 @@ public class MessageFragment extends Fragment
 
             }
         });
-
+/*
+        if(currUserId.equals(currChat.getDriverId())){
+            otherUser = currChat.getRiderId();
+        } else {
+            otherUser = currChat.getDriverId();
+        }
+*/
         displayChatMessages();
 
         send = (Button) v.findViewById(R.id.send_button);
@@ -210,7 +246,6 @@ public class MessageFragment extends Fragment
         mNotificationManager.notify(001, mBuilder.build());
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             //mListener.onFragmentInteraction(uri);

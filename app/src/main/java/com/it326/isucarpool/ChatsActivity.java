@@ -56,7 +56,6 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chats);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -115,6 +114,8 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 chatList.clear();
+                MainActivity.setCount1(0);
+                MainActivity.setCount2(0);
                 Chat chat;
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     chat = child.getValue(Chat.class);
