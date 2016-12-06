@@ -36,11 +36,9 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
     private ArrayList<Report> reportList = new ArrayList<>();
     private ArrayList<String> reportKey = new ArrayList<>();
     private ArrayList<String> banList = new ArrayList<>();
-    private ArrayList<String> banKey = new ArrayList<>();
     private Report selectedReport;
     private String selectedReportKey;
     private String selectedBan;
-    private String selectedBanKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +49,10 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        final TextView text = (TextView) findViewById(R.id.admin_dash_text);
+        final Button userButton = (Button) findViewById(R.id.user_button);
+        final Button reportButton = (Button) findViewById(R.id.report_button);
+        final Button banButton = (Button) findViewById(R.id.ban_button);
         final ListView userListView = (ListView) findViewById(R.id.admin_dash_user_list);
         final ListView reportListView = (ListView) findViewById(R.id.admin_dash_report_list);
         final ListView banListView = (ListView) findViewById(R.id.admin_dash_ban_list);
@@ -67,6 +69,10 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
                 transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                 transaction.addToBackStack(null);
                 transaction.replace(R.id.fragment, frag).commit();
+                text.setVisibility(View.GONE);
+                userButton.setVisibility(View.GONE);
+                reportButton.setVisibility(View.GONE);
+                banButton.setVisibility(View.GONE);
                 userListView.setVisibility(View.GONE);
             }
         });
@@ -84,7 +90,6 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedBan = banList.get(i);
-                selectedBanKey = banKey.get(i);
                 //banListView.setVisibility(View.GONE);
                 openContextMenu(view);
             }
@@ -98,6 +103,14 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
     }
     @Override
     public void onBackPressed() {
+        TextView text = (TextView) findViewById(R.id.admin_dash_text);
+        Button userButton = (Button) findViewById(R.id.user_button);
+        Button reportButton = (Button) findViewById(R.id.report_button);
+        Button banButton = (Button) findViewById(R.id.ban_button);
+        text.setVisibility(View.VISIBLE);
+        userButton.setVisibility(View.VISIBLE);
+        reportButton.setVisibility(View.VISIBLE);
+        banButton.setVisibility(View.VISIBLE);
         final ListView userListView = (ListView) findViewById(R.id.admin_dash_user_list);
         final ListView reportListView = (ListView) findViewById(R.id.admin_dash_report_list);
         final ListView banListView = (ListView) findViewById(R.id.admin_dash_ban_list);
@@ -156,12 +169,12 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
     }
 
     public void getAllBans(){
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("bannedUsers");
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("banned_users");
         ValueEventListener postListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    String u = child.getValue().toString();
+                    String u = child.getKey().toString();
                     banList.add(u);
                 }
                 drawListView();
@@ -206,20 +219,22 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
         if(listToShow == 1){
             menu.setHeaderTitle("User report: " + selectedReport.getMessage());
             menu.add(0, v.getId(), 0, "Ban user");
-            menu.add(0, v.getId(), 0, "Ignore");
+            menu.add(0, v.getId(), 0, "Ignore report");
         }
         else if(listToShow == 2){
             menu.setHeaderTitle("Ban status");
-            menu.add(0, v.getId(), 0, "Unban");
+            menu.add(0, v.getId(), 0, "Unban user");
             menu.add(0, v.getId(), 0, "Cancel");
         }
 
     }
 
     public boolean onContextItemSelected(MenuItem item) {
-        if(item.getTitle()=="Ban User") {
+        if (item.getTitle() == "Ban user") {
             banUser();
-        } else if(item.getTitle() == "Unban") {
+        } else if(item.getTitle() == "Ignore report") {
+            deleteReport();
+        } else if(item.getTitle() == "Unban user") {
             unbanUser();
         } else {
             return false;
@@ -228,20 +243,56 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
     }
 
     public void banUser() {
-        DatabaseReference reportRef = FirebaseDatabase.getInstance().getReference("reports").child(selectedReportKey);
-        reportRef.setValue(null);
-        DatabaseReference banRef = FirebaseDatabase.getInstance().getReference("banned_users");
-        banRef.child(selectedReport.getReportedId()).setValue(selectedReport.getMessage());
+        final DatabaseReference reportRef = FirebaseDatabase.getInstance().getReference("reports").child(selectedReportKey);
+        ValueEventListener removeReportPostListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                dataSnapshot.getRef().removeValue();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        reportRef.addValueEventListener(removeReportPostListener);
+
+        DatabaseReference banRef = FirebaseDatabase.getInstance().getReference("banned_users").child(selectedReport.getReportedId());
+        banRef.setValue(selectedReport.getMessage());
+
+        Toast.makeText(AdminDashboardActivity.this, "User banned", Toast.LENGTH_SHORT).show();
 
         listToShow = 2;
+        reportList.clear();
+        banList.clear();
         getAllReports();
         getAllBans();
     }
 
+    public void deleteReport() {
+        DatabaseReference reportRef = FirebaseDatabase.getInstance().getReference("reports").child(selectedReportKey);
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                dataSnapshot.getRef().removeValue();
+                Toast.makeText(AdminDashboardActivity.this, "Report deleted", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        reportRef.addValueEventListener(postListener);
+    }
+
     public void unbanUser() {
-        DatabaseReference banRef = FirebaseDatabase.getInstance().getReference("banned_users").child(selectedBanKey);
+        DatabaseReference banRef = FirebaseDatabase.getInstance().getReference("banned_users").child(selectedBan);
         banRef.setValue(null);
 
+        Toast.makeText(AdminDashboardActivity.this, "User unbanned", Toast.LENGTH_SHORT).show();
+
+        banList.clear();
         getAllBans();
     }
 

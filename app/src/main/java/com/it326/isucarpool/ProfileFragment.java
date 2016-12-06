@@ -57,19 +57,15 @@ public class ProfileFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                TextView firstName = (TextView) v.findViewById(R.id.firstName);
-                TextView lastName = (TextView) v.findViewById(R.id.lastName);
+                TextView name = (TextView) v.findViewById(R.id.name);
                 TextView gender = (TextView) v.findViewById(R.id.gender);
                 TextView address = (TextView) v.findViewById(R.id.address);
-                TextView city = (TextView) v.findViewById(R.id.city);
-                TextView state = (TextView) v.findViewById(R.id.state);
+                TextView cityState = (TextView) v.findViewById(R.id.city_state);
 
-                firstName.setText(user.getFirstName());
-                lastName.setText(user.getLastName());
+                name.setText(user.getFirstName() + " " + user.getLastName());
                 gender.setText(user.getGender());
                 address.setText(user.getAddress());
-                city.setText(user.getCity());
-                state.setText(user.getState());
+                cityState.setText(user.getCity() + ", " + user.getState());
 
                 loadProfilePicture(userId, v);
             }
@@ -85,7 +81,7 @@ public class ProfileFragment extends Fragment {
 
     public void loadProfilePicture(String userId, final View v) {
         final ImageView profilePicture = (ImageView) v.findViewById(R.id.profile_picture);
-        StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com").child("profile_pictures/" + userId + ".png");
+        StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com").child("profile_pictures/" + userId + ".jpeg");
         final long SIZE_LIMIT = 1024*1024;
         imageRef.getBytes(SIZE_LIMIT).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override

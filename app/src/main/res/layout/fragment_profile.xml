@@ -24,47 +24,27 @@
                     android:layout_marginBottom="10dp"
                     android:id="@+id/profile_picture"/>
 
-
                 <TextView
-                    android:id="@+id/firstName"
+                    android:id="@+id/name"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/first_name"/>
-
-
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/lastName"
-                    android:hint="@string/last_name"/>
-
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/gender"
-                    android:hint="Gender"/>
+                    android:id="@+id/gender"/>
 
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/address"
-                    android:hint="Address"/>
+                    android:id="@+id/address"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/city"
+                    android:id="@+id/city_state"
                     android:hint="City"/>
-
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/state"
-                    android:hint="State"/>
 
         </LinearLayout>
     </ScrollView>
