@@ -15,6 +15,7 @@ public class User {
     private String address;
     private String city;
     private String state;
+    private String emergencyContactEmail;
     private boolean admin;
     private ArrayList<Chat> chatsList;
     private ArrayList<CarpoolOffer> carpoolOffers;
@@ -105,4 +106,8 @@ public class User {
     public boolean getAdmin() { return admin; }
 
     public void setAdmin(boolean admin) { this.admin = admin; }
+
+    public String getEmergencyContactEmail() { return emergencyContactEmail; }
+
+    public void setEmergencyContactEmail(String emergencyContactEmail) { this.emergencyContactEmail = emergencyContactEmail; }
 }

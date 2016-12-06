@@ -51,6 +51,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private AutoCompleteTextView email;
     private AutoCompleteTextView password;
     private AutoCompleteTextView confirmPassword;
+    private AutoCompleteTextView emergencyContact;
     private RadioButton male;
     private RadioButton female;
     private AutoCompleteTextView address;
@@ -79,6 +80,7 @@ public class UserProfileActivity extends AppCompatActivity {
         address = (AutoCompleteTextView) findViewById(R.id.address);
         city = (AutoCompleteTextView) findViewById(R.id.city);
         state = (AutoCompleteTextView) findViewById(R.id.state);
+        emergencyContact = (AutoCompleteTextView) findViewById(R.id.emergency_contact);
         getPicture = (Button) findViewById(R.id.select_picture);
         updateProfile = (Button) findViewById(R.id.update_profile_button);
         profilePicture = (ImageView) findViewById(R.id.profile_picture);
@@ -116,7 +118,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 address.setText(user.getAddress());
                 city.setText(user.getCity());
                 state.setText(user.getState());
-
+                if(!user.getEmergencyContactEmail().isEmpty()) emergencyContact.setText(user.getEmergencyContactEmail());
                 final String gender = user.getGender();
                 if(gender.equals("Male")) {
                     male.setChecked(true);
@@ -208,12 +210,14 @@ public class UserProfileActivity extends AppCompatActivity {
         address.setError(null);
         city.setError(null);
         state.setError(null);
+        emergencyContact.setError(null);
 
         final String firstNameText = firstName.getText().toString();
         final String lastNameText = lastName.getText().toString();
         final String addressText = address.getText().toString();
         final String cityText = city.getText().toString();
         final String stateText = state.getText().toString();
+        final String emergencyContactText = emergencyContact.getText().toString();
         String genderText = "";
 
         //Check to make sure a gender is selected
@@ -251,6 +255,12 @@ public class UserProfileActivity extends AppCompatActivity {
             focusView = state;
             cancel = true;
         }
+        if(emergencyContactText.isEmpty())
+        {
+            emergencyContact.setError("All fields must filled out.");
+            focusView = emergencyContact;
+            cancel = true;
+        }
 
         if(cancel)
         {
@@ -264,6 +274,7 @@ public class UserProfileActivity extends AppCompatActivity {
             user.setAddress(addressText);
             user.setCity(cityText);
             user.setState(stateText);
+            user.setEmergencyContactEmail(emergencyContactText);
             if(profilePicture != null) {
                 profilePicture.setDrawingCacheEnabled(true);
                 profilePicture.buildDrawingCache();

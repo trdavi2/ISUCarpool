@@ -130,6 +130,17 @@
                     android:hint="State"/>
             </android.support.design.widget.TextInputLayout>
 
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <AutoCompleteTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/emergency_contact"
+                    android:hint="Emergency Contact Email"/>
+            </android.support.design.widget.TextInputLayout>
+
             <Button
                 android:id="@+id/update_profile_button"
                 style="?android:textAppearanceSmall"

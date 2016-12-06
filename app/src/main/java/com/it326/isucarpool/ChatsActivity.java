@@ -1,6 +1,7 @@
 package com.it326.isucarpool;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -156,6 +157,20 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
             }
         };
         messages.setAdapter(adapter);
+    }
+
+    public void sentEmail()
+    {
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{""});
+        i.putExtra(Intent.EXTRA_SUBJECT, "Carpool Ride");
+        i.putExtra(Intent.EXTRA_TEXT   , "This user is going on a new Carpool Ride.");
+        try {
+            startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(ChatsActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }
