@@ -23,9 +23,6 @@ android {
         javaMaxHeapSize "4g"
     }
 }
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -40,9 +37,11 @@ dependencies {
     compile 'com.firebaseui:firebase-ui-database:0.6.0'
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.android.support:support-vector-drawable:23.4.0'
-    compile 'com.google.android.gms:play-services:9.6.1'
-    compile 'com.android.support:multidex:1.0.1'
-
+    compile 'com.google.android.gms:play-services-location:9.6.1'
+    compile 'com.google.android.gms:play-services-maps:9.6.1'
+    compile 'com.google.android.gms:play-services-vision:9.6.1'
+    compile 'com.google.android.gms:play-services-identity:9.6.1'
+    compile 'com.google.android.gms:play-services-fitness:9.6.1'
 }
 
 

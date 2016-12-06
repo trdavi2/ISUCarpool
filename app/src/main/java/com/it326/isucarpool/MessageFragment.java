@@ -75,6 +75,7 @@ public class MessageFragment extends Fragment
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_message, container, false);
         // Inflate the layout for this fragmen
+        setHasOptionsMenu(true);
         currUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         chatId = getArguments().getString("chatId");
         input = (EditText) v.findViewById(R.id.input);
@@ -92,13 +93,7 @@ public class MessageFragment extends Fragment
 
             }
         });
-/*
-        if(currUserId.equals(currChat.getDriverId())){
-            otherUser = currChat.getRiderId();
-        } else {
-            otherUser = currChat.getDriverId();
-        }
-*/
+
         displayChatMessages();
 
         send = (Button) v.findViewById(R.id.send_button);
