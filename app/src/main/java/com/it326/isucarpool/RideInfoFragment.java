@@ -33,7 +33,7 @@ public class RideInfoFragment extends Fragment {
 
 
     interface rideInfoFragmentListener {
-        void requestChat(String driverId);
+        void requestChat(String driverId, String rideId);
     }
     rideInfoFragmentListener listener;
 
@@ -161,7 +161,7 @@ public class RideInfoFragment extends Fragment {
     }
     public void requestChat(View view) {
         if(listener != null){
-            listener.requestChat(driverId);
+            listener.requestChat(driverId, rideId);
         }
     }
 }

@@ -84,7 +84,7 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedBan = banList.get(i);
-                selectedBanKey = banKey.get(i);
+                //selectedBanKey = banKey.get(i);
                 //banListView.setVisibility(View.GONE);
                 openContextMenu(view);
             }
@@ -239,9 +239,9 @@ public class AdminDashboardActivity extends AppCompatActivity implements AdminDa
     }
 
     public void unbanUser() {
-        DatabaseReference banRef = FirebaseDatabase.getInstance().getReference("banned_users").child(selectedBanKey);
+        DatabaseReference banRef = FirebaseDatabase.getInstance().getReference("banned_users").child(selectedBan);
         banRef.setValue(null);
-
+        banList.clear();
         getAllBans();
     }
 

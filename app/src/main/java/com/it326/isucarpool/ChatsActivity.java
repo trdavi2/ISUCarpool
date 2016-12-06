@@ -3,6 +3,8 @@ package com.it326.isucarpool;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
@@ -58,7 +60,10 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ChatFragment fragment = new ChatFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragment_chat, fragment);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.addToBackStack(null);
+        transaction.add(R.id.fragment_chat, fragment);
         //Set up Firebase
         chats = FirebaseDatabase.getInstance().getReference("chats");
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -79,15 +84,30 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
                 if (chatList.get(i).getMessages() != null){
                     MessageFragment messageFragment = new MessageFragment();
                     Bundle args = new Bundle();
+                    args.putString("rideId", chatList.get(i).getRideId());
                     args.putString("chatId", chatId.get(i));
                     messageFragment.setArguments(args);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_chat, messageFragment).commit();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    transaction.addToBackStack(null);
+                    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                    transaction.replace(R.id.fragment_chat, messageFragment).commit();
                     list.setVisibility(View.GONE);
                 }
             }
         });
     }
-
+    @Override
+    public void onBackPressed() {
+        final ListView list = (ListView) findViewById(R.id.list_of_chats);
+        int count = getSupportFragmentManager().getBackStackEntryCount();
+        if(count == 1) {
+            list.setVisibility(View.VISIBLE);
+            getSupportFragmentManager().popBackStackImmediate();
+        }
+        else{
+            super.onBackPressed();
+        }
+    }
     public void getAllChats() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("chats");
         ValueEventListener postListener1 = new ValueEventListener() {
@@ -125,6 +145,7 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
                 }
                 else{
                     FirebaseDatabase.getInstance().getReference().child("chats").child(key).removeValue();
+                    FirebaseDatabase.getInstance().getReference().child("bannedUsers").push().setValue(key);
                     Toast.makeText(ChatsActivity.this, "Chat Denied!", Toast.LENGTH_LONG).show();
                 }
             }

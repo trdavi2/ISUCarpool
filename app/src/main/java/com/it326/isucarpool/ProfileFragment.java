@@ -85,7 +85,7 @@ public class ProfileFragment extends Fragment {
 
     public void loadProfilePicture(String userId, final View v) {
         final ImageView profilePicture = (ImageView) v.findViewById(R.id.profile_picture);
-        StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com").child("profile_pictures/" + userId + ".png");
+        StorageReference imageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com").child("profile_pictures/" + userId + ".jpeg");
         final long SIZE_LIMIT = 1024*1024;
         imageRef.getBytes(SIZE_LIMIT).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override

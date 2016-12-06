@@ -261,8 +261,8 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
     }
 
     @Override
-    public void requestChat(String driverId) {
-        Chat chat = new Chat(driverId, FirebaseAuth.getInstance().getCurrentUser().getUid());
+    public void requestChat(String driverId, String rideId) {
+        Chat chat = new Chat(driverId, FirebaseAuth.getInstance().getCurrentUser().getUid(), rideId);
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("chats");
         ref.push().setValue(chat).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

@@ -11,6 +11,7 @@ public class Chat
 {
 
     private String riderId;
+    private String rideId;
     private String driverId;
     private Map<String, Message> messages;
 
@@ -19,8 +20,9 @@ public class Chat
     }
 
 
-    public Chat(String sdriverId, String sriderId) {
+    public Chat(String sdriverId, String sriderId, String srideId) {
         riderId = sriderId;
+        rideId = srideId;
         driverId = sdriverId;
     }
 
@@ -31,6 +33,14 @@ public class Chat
 
     public void setRiderId(String id) {
         this.riderId = id;
+    }
+
+    public String getRideId() {
+        return rideId;
+    }
+
+    public void setRideId(String id) {
+        this.rideId = id;
     }
 
     public Map<String, Message> getMessages() {
