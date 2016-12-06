@@ -124,21 +124,17 @@ public class MessageFragment extends Fragment
 
             }
         });
-/*
-        if(currUserId.equals(currChat.getDriverId())){
-            otherUser = currChat.getRiderId();
-        } else {
-            otherUser = currChat.getDriverId();
-        }
-*/
+
         displayChatMessages();
 
         send = (Button) v.findViewById(R.id.send_button);
         send.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                messages.push().setValue(new Message(input.getText().toString(), System.currentTimeMillis(), currUserId));
-                input.setText("");
+                if(!input.getText().toString().equals("")) {
+                    messages.push().setValue(new Message(input.getText().toString(), System.currentTimeMillis(), currUserId));
+                    input.setText("");
+                }
             }
         });
 
@@ -162,26 +158,16 @@ public class MessageFragment extends Fragment
 
         return false;
     }
+
     private void displayChatMessages()
     {
 
-        //final ListView messageList = (ListView) this.getActivity().findViewById(R.id.list_of_messages);
         adapter = new FirebaseListAdapter<Message>(this.getActivity(), Message.class, R.layout.message, messages) {
 
             @Override
             protected void populateView(View v, Message model, int position) {
-                //messageList = (ListView) v.findViewById(R.id.list_of_messages);
-                // Get references to the views of message.xml
-                /*
-                RelativeLayout rl = (RelativeLayout) v.findViewById(R.id.message);
-                //TextView messageUser = (TextView) v.findViewById(R.id.message_user);
-                //TextView messageTime = (TextView) v.findViewById(R.id.message_time);
 
-               LayoutParams leftMessage = (RelativeLayout.LayoutParams) messageText.getLayoutParams();
-                leftMessage.setMargins(5, 5, 75, 5);
-                LayoutParams rightMessage = (RelativeLayout.LayoutParams) messageText.getLayoutParams();
-                rightMessage.setMargins(75, 5, 5, 5);
-*/              TextView messageTextl;
+                TextView messageTextl;
                 TextView messageTextr;
 
                 if(model.getMessageUser().equals(currUserId)) {
@@ -189,38 +175,16 @@ public class MessageFragment extends Fragment
                     messageTextr = (TextView) v.findViewById(R.id.message_text_r);
                     messageTextr.setText(model.getMessageText());
                     messageTextr.setGravity(Gravity.END);
-                    //messageText.setLayoutParams(rightMessage);
-                    //messageText.s
-                    //messageText.setPaddingRelative(75, 10, 15, 10);
-                    messageTextr.setBackgroundColor(Color.LTGRAY);
                     messageTextl.setVisibility(View.GONE);
                     messageTextr.setVisibility(View.VISIBLE);
                 } else {
                     messageTextl = (TextView) v.findViewById(R.id.message_text_l);
                     messageTextr = (TextView) v.findViewById(R.id.message_text_r);
                     messageTextl.setText(model.getMessageText());
-                    //messageText.setPaddingRelative(15, 10, 25, 10);
-                    messageTextl.setBackgroundColor(Color.parseColor("#ce1126"));
-                    messageTextl.setTextColor(Color.WHITE);
                     messageTextl.setVisibility(View.VISIBLE);
                     messageTextr.setVisibility(View.GONE);
                 }
-                /*if(prevCount < adapter.getCount()){
-                    Message m = adapter.getItem(getCount()-1);
-                    triggerNotification(m.getMessageText());
-                }
-                prevCount = adapter.getCount();*/
-                // Set their text
-                //ArrayList<Message> chatMessage = model;
-                // Message lastMessage = chatMessages.get(chatMessages.size() - 1);
-                //messageText.setText(lastMessage.getMessageText());
-                //messageUser.setText(lastMessage.getMessageUser());
-
-                // Format the date before showing it
-                //messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
-                //lastMessage.getMessageTime()));
             }
-
         };
         messageList.setAdapter(adapter);
 
@@ -297,45 +261,6 @@ public class MessageFragment extends Fragment
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
-    /*@Override
-    public void onPause() {
-        super.onPause();
-        FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages").orderByChild("messageTime").getRef().addChildEventListener(new ChildEventListener() {
-            long prevCount = 0;
-            int count = 0;
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //triggerNotification(dataSnapshot.getValue(Message.class).getMessageText());
-                long count = dataSnapshot.getChildrenCount();
-                if (prevCount < count) {
-                    Message m = dataSnapshot.getValue(Message.class);
-                    triggerNotification(m.getMessageText());
-                }
-                prevCount = count;
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }*/
 
     @Override
     public void onDetach() {
