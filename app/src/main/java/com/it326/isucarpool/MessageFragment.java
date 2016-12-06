@@ -1,9 +1,11 @@
 package com.it326.isucarpool;
 
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.RingtoneManager;
@@ -13,8 +15,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -35,9 +41,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.Chat;
 import com.it326.isucarpool.model.Message;
+import com.it326.isucarpool.model.Report;
 
 import java.util.ArrayList;
 
@@ -68,18 +74,10 @@ public class MessageFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_message, container, false);
+        // Inflate the layout for this fragmen
         currUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        final String rideId = getArguments().getString("rideId");
-
         chatId = getArguments().getString("chatId");
         input = (EditText) v.findViewById(R.id.input);
-        final Button acc = (Button) v.findViewById(R.id.acc_ride);
-        acc.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseDatabase.getInstance().getReference("rides").child(rideId).child("riderId").setValue(currChat.getRiderId());
-            }
-        });
 
         messages = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages").orderByChild("messageTime").getRef();
         messageList = (ListView) v.findViewById(R.id.list_of_messages);
@@ -87,29 +85,6 @@ public class MessageFragment extends Fragment
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currChat = dataSnapshot.getValue(Chat.class);
-                FirebaseDatabase.getInstance().getReference("rides").child(rideId).child("riderId").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        String ride = dataSnapshot.getValue(String.class);
-                        if(ride == null){
-                            if(!currChat.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
-                                acc.setVisibility(View.GONE);
-                            }
-                            else{
-                                acc.setVisibility(View.VISIBLE);
-
-                            }
-                        }
-                        else{
-                            acc.setVisibility(View.GONE);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
             }
 
             @Override
@@ -138,6 +113,23 @@ public class MessageFragment extends Fragment
         return v;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_message, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.report_user:
+                submitReport();
+                break;
+            default:
+                break;
+        }
+
+        return false;
+    }
     private void displayChatMessages()
     {
 
@@ -230,6 +222,40 @@ public class MessageFragment extends Fragment
         }
     }
 
+    public void submitReport() {
+
+        if(currUserId.equals(currChat.getDriverId())){
+            otherUser = currChat.getRiderId();
+        } else {
+            otherUser = currChat.getDriverId();
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this.getContext());
+        builder.setTitle("Submit report");
+
+        final EditText input = new EditText(this.getContext());
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String reportText = input.getText().toString();
+                Report report = new Report(currUserId, otherUser, reportText);
+                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("reports");
+                ref.push().setValue(report);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
