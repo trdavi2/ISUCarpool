@@ -74,8 +74,11 @@ public class MessageFragment extends Fragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_message, container, false);
-        // Inflate the layout for this fragmen
+        // Inflate the layout for this fragment
+
+        //enables options menu for this fragment
         setHasOptionsMenu(true);
+
         currUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         chatId = getArguments().getString("chatId");
         input = (EditText) v.findViewById(R.id.input);
@@ -108,11 +111,13 @@ public class MessageFragment extends Fragment
         return v;
     }
 
+    //Inflates the message menu when the options menu is created
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_message, menu);
     }
 
+    //Calls the submit report menu when the report submission button is pressed
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
