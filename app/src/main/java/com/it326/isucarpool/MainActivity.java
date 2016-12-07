@@ -126,6 +126,15 @@ public class MainActivity extends AppCompatActivity
         chatS = settings.getBoolean("recieveChat", true);
         rideS = settings.getBoolean("recieveRide", true);
         vibeS = settings.getBoolean("vibrate", false);
+
+        if(!FirebaseAuth.getInstance().getCurrentUser().isEmailVerified())
+        {
+            Intent intent = new Intent(getBaseContext(), EmailVerificationActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -402,8 +411,6 @@ public class MainActivity extends AppCompatActivity
     private static int count1 = 0;
     private static int count2 = 0;
     private static int count3 = 0;
-    private static int count4 = 0;
-
 
     public static void setCount1(int count){
         count1 = count;
@@ -414,18 +421,12 @@ public class MainActivity extends AppCompatActivity
     public static void setCount3(int count){
         count3 = count;
     }
-    public static void setCount4(int count){
-        count4 = count;
-    }
-
     @Override
     public void onPause() {
         super.onPause();
         count1 = 0;
         count2 = 0;
         count3 = 0;
-        count4 = 0;
-
         DatabaseReference refchat = FirebaseDatabase.getInstance().getReference("chats");
         ValueEventListener postListener1 = new ValueEventListener() {
 
@@ -436,7 +437,7 @@ public class MainActivity extends AppCompatActivity
                 Chat chat = null;
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     chat = child.getValue(Chat.class);
-                    if(chat.getDriverId().equals(uid) || chat.getRiderId().equals(uid)){
+                    if(chat.getDriverId().equals(uid)){
                         newChat.add(chat);
                     }
                 }
