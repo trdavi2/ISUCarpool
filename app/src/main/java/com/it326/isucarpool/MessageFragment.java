@@ -298,7 +298,7 @@ public class MessageFragment extends Fragment
                     } catch (android.content.ActivityNotFoundException ex) {
                         //Toast.makeText(ChatsActiv, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
                     }
-                    
+
                 }
             }
             @Override
