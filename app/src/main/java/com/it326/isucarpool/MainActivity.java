@@ -411,6 +411,7 @@ public class MainActivity extends AppCompatActivity
     private static int count1 = 0;
     private static int count2 = 0;
     private static int count3 = 0;
+    private static int count4 = 0;
 
     public static void setCount1(int count){
         count1 = count;
@@ -421,12 +422,16 @@ public class MainActivity extends AppCompatActivity
     public static void setCount3(int count){
         count3 = count;
     }
+    public static void setCount4(int count){
+        count4 = count;
+    }
     @Override
     public void onPause() {
         super.onPause();
         count1 = 0;
         count2 = 0;
         count3 = 0;
+        count4 = 0;
         DatabaseReference refchat = FirebaseDatabase.getInstance().getReference("chats");
         ValueEventListener postListener1 = new ValueEventListener() {
 
