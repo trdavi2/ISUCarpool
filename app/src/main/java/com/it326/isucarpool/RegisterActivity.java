@@ -183,8 +183,10 @@ public class RegisterActivity extends AppCompatActivity
                         String uid = fb.getCurrentUser().getUid();
                         fb.getCurrentUser().sendEmailVerification();
                         FirebaseDatabase.getInstance().getReference("users").child(uid).child("profile").setValue(user);
-                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                        Intent intent = new Intent(getBaseContext(), EmailVerificationActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(intent);
+                        finish();
                     }
                 }
             });

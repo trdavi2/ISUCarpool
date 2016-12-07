@@ -137,8 +137,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         String email = mEmailView.getText().toString();
         String password = mPasswordView.getText().toString();
 
-        Toast.makeText(LoginActivity.this, ":"+email+":"+password, Toast.LENGTH_SHORT).show();
-
         boolean cancel = false;
         View focusView = null;
 
@@ -176,10 +174,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 if(dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                     Toast.makeText(LoginActivity.this, "You have been banned. Email isucarpool@gmail.com for questions regarding this.", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
-                                    finish();
+                                    if(FirebaseAuth.getInstance().getCurrentUser().isEmailVerified()) {
+                                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        Intent intent = new Intent(getBaseContext(), EmailVerificationActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(intent);
+                                        finish();
+                                    }
                                 }
                             }
 
