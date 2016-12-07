@@ -7,14 +7,11 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -25,31 +22,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
-import android.widget.RelativeLayout;
-import android.widget.RelativeLayout.LayoutParams;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.Chat;
 import com.it326.isucarpool.model.Message;
 import com.it326.isucarpool.model.Report;
 import com.it326.isucarpool.model.User;
-
-import java.util.ArrayList;
-
 
 public class MessageFragment extends Fragment
 {
@@ -62,11 +49,11 @@ public class MessageFragment extends Fragment
     private String currUserId;
     private String otherUser;
     private Chat currChat;
+    private MessageFragmentListener mListener;
 
     interface MessageFragmentListener{
 
     }
-    MessageFragmentListener mListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -194,33 +181,6 @@ public class MessageFragment extends Fragment
 
     }
 
-    public void triggerNotification(String message){
-        Intent resultIntent = new Intent(this.getActivity(), ChatsActivity.class);
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this.getActivity());
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        Notification.Builder mBuilder = new Notification.Builder(this.getActivity())
-                .setStyle(new Notification.InboxStyle())
-                .setVibrate(new long[] { 1000, 1000, 1000, 1000, 1000 })
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setSound(alarmSound)
-                .setSmallIcon(R.drawable.messenger_bubble_large_white)
-                .setContentTitle("NEW RIDE!!!")
-                .setContentText(message)
-                .addAction(R.drawable.idp_button_background_email, "BUTTON", resultPendingIntent);
-
-        NotificationManager mNotificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-        mNotificationManager.notify(001, mBuilder.build());
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            //mListener.onFragmentInteraction(uri);
-        }
-    }
-
     public void submitReport() {
 
         if(currUserId.equals(currChat.getDriverId())){
@@ -270,11 +230,6 @@ public class MessageFragment extends Fragment
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     public void sendEmail()

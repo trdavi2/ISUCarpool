@@ -27,8 +27,8 @@ public class RidesFragment extends Fragment {
         boolean listItemClicked(View view);
         void searchDestinations(String destination);
     }
-    String destination = "";
-    ridesListener listener;
+    private String destination = "";
+    private ridesListener listener;
     public RidesFragment() {
     }
 

@@ -26,8 +26,7 @@ public class ViewPreviousRidesOffersActivityFragment extends Fragment {
     interface previousRidesListener {
         void toggleList();
     }
-    String destination = "";
-    previousRidesListener listener;
+    private previousRidesListener listener;
     public ViewPreviousRidesOffersActivityFragment() {
     }
 

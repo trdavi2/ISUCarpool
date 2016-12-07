@@ -30,12 +30,15 @@ public class CreateRideFragment extends Fragment {
     private String gender;
     private String radius;
     private String departure;
+    private String strStart;
+    private String strEnd;
+
+    private createRideFragmentListener listener;
 
     interface createRideFragmentListener {
         void createRideBtn(String startingPoint, String destination, String description, String gender,
                             String radius, String departure);
     }
-    createRideFragmentListener listener;
 
     public CreateRideFragment() {
     }
@@ -53,9 +56,6 @@ public class CreateRideFragment extends Fragment {
 
         }
     }
-
-    private String strStart;
-    private String strEnd;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

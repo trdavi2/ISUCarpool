@@ -17,11 +17,12 @@ public class AdminDashboardFragment extends Fragment {
         void toggleList(int list);
     }
 
-    adminDashboardListener listener;
-
     public AdminDashboardFragment() {
 
     }
+
+    private adminDashboardListener listener;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

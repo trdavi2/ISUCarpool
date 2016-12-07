@@ -41,19 +41,15 @@ import java.util.ArrayList;
 
 public class ViewPreviousRidesOffersActivity extends AppCompatActivity implements ViewPreviousRidesOffersActivityFragment.previousRidesListener {
 
-    private User user = MainActivity.getUser();
     private ArrayList<CarpoolOffer> offerList = new ArrayList<>();
     private ArrayList<CarpoolOffer> rideList = new ArrayList<>();
     private ArrayList<Rating> allRatingList = new ArrayList<>();
     private ArrayList<Double> ratingList = new ArrayList<>();
 
-    DatabaseReference ref2;
-    ValueEventListener postListener2;
-    boolean shortClick = false;
-    int listToShow = 0;
-    String selectUserId = "";
-    String selectRideId = "";
-    private FirebaseAuth fb;
+    private boolean shortClick = false;
+    private int listToShow = 0;
+    private String selectUserId = "";
+    private String selectRideId = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

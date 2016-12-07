@@ -35,7 +35,7 @@ public class RideInfoFragment extends Fragment {
     interface rideInfoFragmentListener {
         void requestChat(String driverId, String rideId);
     }
-    rideInfoFragmentListener listener;
+    private rideInfoFragmentListener listener;
 
     private String rideId;
     private String driverId;

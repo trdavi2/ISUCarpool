@@ -48,9 +48,6 @@ public class UserProfileActivity extends AppCompatActivity {
     private User user;
     private AutoCompleteTextView firstName;
     private AutoCompleteTextView lastName;
-    private AutoCompleteTextView email;
-    private AutoCompleteTextView password;
-    private AutoCompleteTextView confirmPassword;
     private AutoCompleteTextView emergencyContact;
     private RadioButton male;
     private RadioButton female;

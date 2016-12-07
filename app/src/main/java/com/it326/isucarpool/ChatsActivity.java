@@ -49,7 +49,6 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
     private FirebaseListAdapter<Chat> adapter;
     private ArrayList<Chat> chatList;
     private ArrayList<String> chatId;
-    private String selectedChatId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -68,11 +67,6 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
         chats = FirebaseDatabase.getInstance().getReference("chats");
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-      //  Button sendChat = (Button) findViewById(R.id.send_chat);
-//        sendChat.setOnClickListener(this);
-
-        //driverId = ((TextView) findViewById(R.id.driver_id)).getText().toString();
-        //riderId = ((TextView) findViewById(R.id.ride_id)).getText().toString();
         chatList = new ArrayList<Chat>();
         chatId = new ArrayList<String>();
         getAllChats();
@@ -155,30 +149,5 @@ public class ChatsActivity extends AppCompatActivity implements MessageFragment.
         yourListView.setAdapter(customAdapter);
     }
 
-    private void displayChatMessages()
-    {
-
-        ListView messages = (ListView) findViewById(R.id.list_of_messages);
-        adapter = new FirebaseListAdapter<Chat>(this, Chat.class, R.layout.chat, chats) {
-            @Override
-            protected void populateView(View v, Chat model, int position) {
-                // Get references to the views of message.xml
-                //TextView messageText = (TextView) v.findViewById(R.id.message_text);
-                TextView messageUser = (TextView) v.findViewById(R.id.message_user);
-                TextView messageTime = (TextView) v.findViewById(R.id.message_time);
-
-                // Set their text
-                //ArrayList<Message> chatMessages = model.getMessages();
-               // Message lastMessage = chatMessages.get(chatMessages.size() - 1);
-                //messageText.setText(lastMessage.getMessageText());
-                //messageUser.setText(lastMessage.getMessageUser());
-
-                // Format the date before showing it
-                //messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",
-                        //lastMessage.getMessageTime()));
-            }
-        };
-        messages.setAdapter(adapter);
-    }
 
 }

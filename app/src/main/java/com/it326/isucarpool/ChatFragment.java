@@ -24,17 +24,11 @@ import java.util.List;
 
 public class ChatFragment extends Fragment
 {
-    private FirebaseListAdapter<Message> chat;
-    private Button send;
-    private EditText input;
-    private String chatId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_chat, container, false);
-
-
         return v;
     }
 

@@ -36,7 +36,7 @@ public class EditRideFragment extends Fragment {
                                 boolean driverR, boolean riderR);
         void deleteRide(String key);
     }
-    editRideFragmentListener listener;
+    private editRideFragmentListener listener;
 
     public EditRideFragment() {
     }

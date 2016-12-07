@@ -24,12 +24,13 @@ import java.util.List;
  */
 public class ChatListAdapter extends ArrayAdapter<Chat>
 {
-    public interface chatListListener{
-        void acceptDeny(Chat chat, String key, int accDeny);
-    }
-    chatListListener listener;
+    private chatListListener listener;
     private List<String> chatId;
     private String otherUser;
+
+    interface chatListListener{
+        void acceptDeny(Chat chat, String key, int accDeny);
+    }
 
     public ChatListAdapter(Context context, int resource) {
         super(context, resource);
@@ -116,14 +117,6 @@ public class ChatListAdapter extends ArrayAdapter<Chat>
 
 
         return v;
-    }
-
-    public String getOtherUser() {
-        return otherUser;
-    }
-
-    public void setOtherUser(String otherUser) {
-        this.otherUser = otherUser;
     }
 
     public void acceptDeny(Chat chat, String key, int accDeny) {

@@ -40,7 +40,7 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
     public interface rideListListener{
         void editOffer(CarpoolOffer ride, String key);
     }
-    rideListListener listener;
+    private rideListListener listener;
     private String driver = "";
     private List<Rating> allRatingList = new ArrayList<>();
     private List<Double> ratingList = new ArrayList<>();

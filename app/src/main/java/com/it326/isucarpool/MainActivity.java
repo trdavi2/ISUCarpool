@@ -1,12 +1,10 @@
 package com.it326.isucarpool;
 
-import android.*;
 import android.Manifest;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -20,19 +18,12 @@ import android.location.LocationManager;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.app.RemoteInput;
 import android.support.v4.app.TaskStackBuilder;
-import android.support.v7.app.NotificationCompat;
-import android.util.Base64;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -42,36 +33,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.share.model.ShareLinkContent;
-import com.facebook.share.widget.MessageDialog;
-import com.facebook.share.widget.ShareDialog;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.vision.text.Text;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -79,10 +57,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.it326.isucarpool.LoginActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.Chat;
 import com.it326.isucarpool.model.User;
@@ -90,9 +66,6 @@ import com.it326.isucarpool.model.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.it326.isucarpool.R.id.map;
-import static com.it326.isucarpool.R.id.profile_picture;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnMapReadyCallback, View.OnClickListener, CreateRideFragment.createRideFragmentListener  {
@@ -108,13 +81,12 @@ public class MainActivity extends AppCompatActivity
     private boolean chatS;
     private boolean rideS;
     private boolean vibeS;
-    @Override
-    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+    private static int count1 = 0;
+    private static int count2 = 0;
+    private static int count3 = 0;
+    private static int count4 = 0;
+    private CallbackManager callbackManager;
 
-    }
-    CallbackManager callbackManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -187,9 +159,20 @@ public class MainActivity extends AppCompatActivity
         end = (EditText) findViewById(R.id.endingLocation);
         but = (Button) findViewById(R.id.route);
         but.setOnClickListener(this);
-
     }
 
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+    }
+    public static User getUser(){
+        return user;
+    }
+    public static Bitmap getProfilePic(){
+        return profilePic;
+    }
     public void loadProfilePicture(){
         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com/");
         final long ONE_MEGABYTE = 1024 * 1024;
@@ -368,14 +351,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public static User getUser(){
-        return user;
-    }
-    public static Bitmap getProfilePic(){
-        return profilePic;
-    }
-
-
     @Override
     public void createRideBtn(String startingPoint, String destination, String description, String gender,
                               String radius, String departure) {
@@ -408,11 +383,6 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private static int count1 = 0;
-    private static int count2 = 0;
-    private static int count3 = 0;
-    private static int count4 = 0;
-
     public static void setCount1(int count){
         count1 = count;
     }
@@ -425,6 +395,7 @@ public class MainActivity extends AppCompatActivity
     public static void setCount4(int count){
         count4 = count;
     }
+
     @Override
     public void onPause() {
         super.onPause();
