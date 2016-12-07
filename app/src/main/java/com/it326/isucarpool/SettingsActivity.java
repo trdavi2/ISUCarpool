@@ -33,18 +33,19 @@ public class SettingsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        setSettings();
 
+    }
+
+    public void setSettings(){
         final Switch rideS = (Switch) findViewById(R.id.notify_ride);
         final Switch chatS = (Switch) findViewById(R.id.notify_chat);
-        final Switch vibrate = (Switch) findViewById(R.id.vibrate);
 
         SharedPreferences settings = getSharedPreferences("myPref", 0);
         chat = settings.getBoolean("recieveChat", true);
         chatS.setChecked(chat);
         ride = settings.getBoolean("recieveRide", false);
         rideS.setChecked(ride);
-        vibe = settings.getBoolean("vibrate", false);
-        vibrate.setChecked(vibe);
 
         chatS.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -62,17 +63,8 @@ public class SettingsActivity extends AppCompatActivity {
                 editor.putBoolean("recieveRide", rideS.isChecked());
             }
         });
-        vibrate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                SharedPreferences settings = getSharedPreferences("myPref", 0);
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putBoolean("vibrate", vibrate.isChecked());
-            }
-        });
-
-
     }
+
     @Override
     protected void onStop(){
         super.onStop();
@@ -80,10 +72,8 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = settings.edit();
         Switch rideS = (Switch) findViewById(R.id.notify_ride);
         Switch chatS = (Switch) findViewById(R.id.notify_chat);
-        Switch vibrate = (Switch) findViewById(R.id.vibrate);
         editor.putBoolean("recieveChat", chatS.isChecked());
         editor.putBoolean("recieveRide", rideS.isChecked());
-        editor.putBoolean("vibrate", vibrate.isChecked());
 
         // Commit the edits!
         editor.commit();

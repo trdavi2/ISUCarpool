@@ -49,6 +49,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.Chat;
+import com.it326.isucarpool.model.Rating;
 import com.it326.isucarpool.model.User;
 
 import java.io.IOException;
@@ -68,6 +69,8 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
 
     private User user = MainActivity.getUser();
     private ArrayList<CarpoolOffer> rideList = new ArrayList<>();
+    private ArrayList<Rating> allRatingList = new ArrayList<>();
+    private ArrayList<Double> ratingList = new ArrayList<>();
 
 
     @Override
@@ -105,8 +108,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 transaction.replace(R.id.fragment, frag).commit();
             }
         });
-
-        getAllRides("");
+        getAllRatings();
     }
 
     @Override
@@ -167,23 +169,29 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                                 if (((start < rad || dest < rad) && search.equals("")) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                     if ((offer.getGender().equals("Males") && user.getGender().equals("Male")) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
+                                        calculateRating(offer.getDriverId());
                                         drawListView();
                                     } else if ((offer.getGender().equals("Females") && user.getGender().equals("Female")) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
+                                        calculateRating(offer.getDriverId());
                                         drawListView();
                                     } else if (offer.getGender().equals("Males, Females") || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
+                                        calculateRating(offer.getDriverId());
                                         drawListView();
                                     }
-                                } else if ((start < rad || dest < rad) && !search.equals("")) {
+                                } else if ((start < rad || dest < rad) && !search.equals("") || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                     if ((offer.getGender().equals("Males") && user.getGender().equals("Male") && offer.getDestination().contains(search))) {
                                         rideList.add(offer);
+                                        calculateRating(offer.getDriverId());
                                         drawListView();
                                     } else if ((offer.getGender().equals("Females") && user.getGender().equals("Female") && offer.getDestination().contains(search)) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
+                                        calculateRating(offer.getDriverId());
                                         drawListView();
                                     } else if ((offer.getGender().equals("Males, Females") && offer.getDestination().contains(search)) || offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                                         rideList.add(offer);
+                                        calculateRating(offer.getDriverId());
                                         drawListView();
                                     }
                                 }
@@ -203,7 +211,7 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
 
     public void drawListView() {
         final ListView yourListView = (ListView) findViewById(R.id.rideslistview);
-        RidesListAdapter customAdapter = new RidesListAdapter(this, R.layout.adapter_rides_listitem, rideList);
+        RidesListAdapter customAdapter = new RidesListAdapter(this, R.layout.adapter_rides_listitem, rideList, allRatingList, ratingList);
         customAdapter.setRideListListener(new RidesListAdapter.rideListListener() {
             @Override
             public void editOffer(CarpoolOffer ride, String key) {
@@ -342,6 +350,8 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
         ride.setRiderRated(riderR);
         ride.setDeparture(departure);
         MainActivity.setCount3(0);
+        MainActivity.setCount4(0);
+
 
         FirebaseDatabase.getInstance().getReference("rides").child(rideKey).setValue(ride).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -353,6 +363,8 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
 
     @Override
     public void deleteRide(String key) {
+        MainActivity.setCount3(0);
+        MainActivity.setCount4(0);
         FirebaseDatabase.getInstance().getReference("rides").child(key).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -364,5 +376,45 @@ public class RidesActivity extends AppCompatActivity implements RidesFragment.ri
                 getAllRides("");
             }
         });
+    }
+
+    public void getAllRatings() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("ratings");
+        ValueEventListener postListener1 = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ratingList.clear();
+                allRatingList.clear();
+                for (DataSnapshot child : dataSnapshot.getChildren()) {
+                    Rating rate = child.getValue(Rating.class);
+                    allRatingList.add(rate);
+                }
+                getAllRides("");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("TAG", "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+        ref.addValueEventListener(postListener1);
+    }
+
+    public void calculateRating(final String key) {
+        ArrayList<Double> tmpRatingList = new ArrayList<>();
+        for(int j = 0; j < allRatingList.size(); j++){
+            String val = allRatingList.get(j).getDriverId();
+            if(val.equals(key)){
+                tmpRatingList.add((double) Math.round((Double.parseDouble(allRatingList.get(j).getRating())*10)/10));
+            }
+        }
+
+        double r = 0;
+        int i = 0;
+        for(i = 0; i < tmpRatingList.size(); i++){
+            r = r + tmpRatingList.get(i);
+        }
+        r = (double) Math.round((r/i)*10)/10;
+        ratingList.add(r);
     }
 }

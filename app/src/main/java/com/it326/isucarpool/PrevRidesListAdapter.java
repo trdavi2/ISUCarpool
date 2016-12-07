@@ -121,7 +121,7 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                             r = allRatingList.get(i);
                         }
                     }
-                    if(r == null){
+                    if(r == null || !p.getRiderRated()){
                         yr.setText("Rate Rider!");
                     }
                     else if(p.getRideId().equals(r.getRideId())){
@@ -135,7 +135,7 @@ public class PrevRidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                             r = allRatingList.get(i);
                         }
                     }
-                    if(r == null){
+                    if(r == null || !p.getDriverRated()){
                         yr.setText("Rate Driver!");
                     }
                     else if (p.getRideId().equals(r.getRideId())) {

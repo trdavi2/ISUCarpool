@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -104,6 +105,9 @@ public class MainActivity extends AppCompatActivity
     private SupportMapFragment mapFragment;
     private FirebaseAuth fb;
     private static Bitmap profilePic;
+    private boolean chatS;
+    private boolean rideS;
+    private boolean vibeS;
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -118,7 +122,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         loadProfilePicture();
-
+        SharedPreferences settings = getSharedPreferences("myPref", 0);
+        chatS = settings.getBoolean("recieveChat", true);
+        rideS = settings.getBoolean("recieveRide", true);
+        vibeS = settings.getBoolean("vibrate", false);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -395,6 +402,8 @@ public class MainActivity extends AppCompatActivity
     private static int count1 = 0;
     private static int count2 = 0;
     private static int count3 = 0;
+    private static int count4 = 0;
+
 
     public static void setCount1(int count){
         count1 = count;
@@ -405,12 +414,18 @@ public class MainActivity extends AppCompatActivity
     public static void setCount3(int count){
         count3 = count;
     }
+    public static void setCount4(int count){
+        count4 = count;
+    }
+
     @Override
     public void onPause() {
         super.onPause();
         count1 = 0;
         count2 = 0;
         count3 = 0;
+        count4 = 0;
+
         DatabaseReference refchat = FirebaseDatabase.getInstance().getReference("chats");
         ValueEventListener postListener1 = new ValueEventListener() {
 
@@ -421,7 +436,7 @@ public class MainActivity extends AppCompatActivity
                 Chat chat = null;
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     chat = child.getValue(Chat.class);
-                    if(chat.getDriverId().equals(uid)){
+                    if(chat.getDriverId().equals(uid) || chat.getRiderId().equals(uid)){
                         newChat.add(chat);
                     }
                 }
@@ -438,7 +453,7 @@ public class MainActivity extends AppCompatActivity
         };
         refchat.addValueEventListener(postListener1);
 
-
+        final ArrayList<CarpoolOffer> newOffer = new ArrayList<CarpoolOffer>();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("rides").orderByKey().getRef();
         ValueEventListener postListener2 = new ValueEventListener() {
@@ -447,11 +462,14 @@ public class MainActivity extends AppCompatActivity
                 CarpoolOffer offer = null;
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
                     offer = child.getValue(CarpoolOffer.class);
+                    if(offer.getRiderId().equals("")) {
+                        newOffer.add(offer);
+                    }
                 }
-                if(count3 > 0 && !offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) && !offer.getRiderRated() && !offer.getDriverRated()) {
+                if(count4 < newOffer.size() && count3 > 0 && !offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) && !offer.getRiderRated() && !offer.getDriverRated()) {
                     triggerNotification("New ride offer!", offer.getDestination() + "\n" + offer.getDeparture(), count3);
-                    count3 = 0;
                 }
+                count4 = newOffer.size();
                 count3++;
             }
 
@@ -466,11 +484,8 @@ public class MainActivity extends AppCompatActivity
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
         Intent resultIntent1 = new Intent(this, RidesActivity.class);
         Intent resultIntent2 = new Intent(this, ChatsActivity.class);
-        boolean chatS = SettingsActivity.getChat();
-        boolean rideS = SettingsActivity.getRide();
-        boolean vibeS = SettingsActivity.getVibe();
 
-        if((rideS && title.equals("New ride offer!")) || (chatS && title.equals("New Message!"))) {
+        if((rideS && title.equals("New ride offer!")) || (chatS && (title.equals("New Message!") || title.equals("New chat request!")))) {
             PendingIntent pendingIntent;
             if (title.equals("New ride offer!")) {
                 stackBuilder.addParentStack(MainActivity.class);

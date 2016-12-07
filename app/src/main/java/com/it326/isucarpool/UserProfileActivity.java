@@ -117,7 +117,7 @@ public class UserProfileActivity extends AppCompatActivity {
                 address.setText(user.getAddress());
                 city.setText(user.getCity());
                 state.setText(user.getState());
-                if(!user.getEmergencyContactEmail().equals(null)) emergencyContact.setText(user.getEmergencyContactEmail());
+                if(user.getEmergencyContactEmail() != null) emergencyContact.setText(user.getEmergencyContactEmail());
                 final String gender = user.getGender();
                 if(gender.equals("Male")) {
                     male.setChecked(true);

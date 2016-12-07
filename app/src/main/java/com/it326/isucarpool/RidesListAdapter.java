@@ -29,8 +29,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.it326.isucarpool.model.CarpoolOffer;
+import com.it326.isucarpool.model.Rating;
 import com.it326.isucarpool.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
@@ -40,14 +42,18 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
     }
     rideListListener listener;
     private String driver = "";
+    private List<Rating> allRatingList = new ArrayList<>();
+    private List<Double> ratingList = new ArrayList<>();
     private Bitmap profilePic;
 
     public RidesListAdapter(Context context, int textViewResourceId) {
         super(context, textViewResourceId);
     }
 
-    public RidesListAdapter(Context context, int resource, List<CarpoolOffer> rides) {
+    public RidesListAdapter(Context context, int resource, List<CarpoolOffer> rides, List<Rating> allRatingList, List<Double> ratingList) {
         super(context, resource, rides);
+        this.allRatingList = allRatingList;
+        this.ratingList = ratingList;
     }
 
     @Override
@@ -71,6 +77,8 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
             TextView tt1 = (TextView) v.findViewById(R.id.ride_driver);
             TextView tt2 = (TextView) v.findViewById(R.id.ride_departure);
             TextView tt3 = (TextView) v.findViewById(R.id.ride_dest);
+            TextView dr = (TextView) v.findViewById(R.id.driver_rating);
+
             CarpoolOffer ride = null;
             if(id != null){
                 id.setText(p.getRideId());
@@ -112,6 +120,11 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                             getRide(p.getRideId());
                         }
                     });
+                }
+            }
+            if(dr != null) {
+                if(ratingList.size() > 0) {
+                    dr.setText("Rating: " + ratingList.get(position) + "/5.0");
                 }
             }
         }

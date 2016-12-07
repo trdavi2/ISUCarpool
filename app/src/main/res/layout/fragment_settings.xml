@@ -19,12 +19,6 @@
             android:layout_height="wrap_content"
             android:text="Notify new message"
             android:padding="16dp" />
-        <Switch
-            android:id="@+id/vibrate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/vibrate"
-            android:padding="16dp" />
     </LinearLayout>
 
 </FrameLayout>

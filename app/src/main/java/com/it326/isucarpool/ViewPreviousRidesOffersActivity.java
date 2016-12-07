@@ -235,6 +235,8 @@ public class ViewPreviousRidesOffersActivity extends AppCompatActivity implement
 
     public void createRating(int rating, String id) {
         Rating rate = null;
+        MainActivity.setCount3(0);
+        MainActivity.setCount4(0);
         if (listToShow == 0) {
             rate = new Rating(FirebaseAuth.getInstance().getCurrentUser().getUid(), id, String.valueOf(rating), selectRideId);
         } else {
