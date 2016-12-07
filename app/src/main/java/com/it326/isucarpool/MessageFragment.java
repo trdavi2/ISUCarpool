@@ -31,6 +31,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -45,6 +46,7 @@ import com.it326.isucarpool.model.CarpoolOffer;
 import com.it326.isucarpool.model.Chat;
 import com.it326.isucarpool.model.Message;
 import com.it326.isucarpool.model.Report;
+import com.it326.isucarpool.model.User;
 
 import java.util.ArrayList;
 
@@ -86,6 +88,7 @@ public class MessageFragment extends Fragment
             @Override
             public void onClick(View view) {
                 FirebaseDatabase.getInstance().getReference("rides").child(rideId).child("riderId").setValue(currChat.getRiderId());
+                sendEmail();
             }
         });
 
@@ -137,6 +140,7 @@ public class MessageFragment extends Fragment
                 }
             }
         });
+
 
         return v;
     }
@@ -271,5 +275,36 @@ public class MessageFragment extends Fragment
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void sendEmail()
+    {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("profile");
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(!user.getEmergencyContactEmail().equals(null))
+                {
+                    String body = "I am going on a Carpool Ride!";
+                    Intent i = new Intent(Intent.ACTION_SEND);
+                    i.setType("message/rfc822");
+                    i.putExtra(Intent.EXTRA_EMAIL  , new String[]{user.getEmergencyContactEmail()});
+                    i.putExtra(Intent.EXTRA_SUBJECT, "Carpool Ride");
+                    i.putExtra(Intent.EXTRA_TEXT   , body);
+                    try {
+                        startActivity(Intent.createChooser(i, "Send mail..."));
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        //Toast.makeText(ChatsActiv, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                    }
+                    
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }
