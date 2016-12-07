@@ -119,6 +119,14 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         loadProfilePicture();
 
+        if(!FirebaseAuth.getInstance().getCurrentUser().isEmailVerified())
+        {
+            Intent intent = new Intent(getBaseContext(), EmailVerificationActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+        }
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
