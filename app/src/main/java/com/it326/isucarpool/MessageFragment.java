@@ -236,11 +236,11 @@ public class MessageFragment extends Fragment
     {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(uid).child("profile");
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
-                if(!user.getEmergencyContactEmail().equals(null))
+                if(user.getEmergencyContactEmail() != null)
                 {
                     String body = "I am going on a Carpool Ride!";
                     Intent i = new Intent(Intent.ACTION_SEND);

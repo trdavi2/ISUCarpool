@@ -91,9 +91,14 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loadProfilePicture();
+            }
+        }).start();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        loadProfilePicture();
         SharedPreferences settings = getSharedPreferences("myPref", 0);
         chatS = settings.getBoolean("recieveChat", true);
         rideS = settings.getBoolean("recieveRide", true);
@@ -175,8 +180,9 @@ public class MainActivity extends AppCompatActivity
     }
     public void loadProfilePicture(){
         StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl("gs://isucarpool-a55c8.appspot.com/");
-        final long ONE_MEGABYTE = 1024 * 1024;
-        storageRef.child("profile_pictures/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + ".jpeg").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+        final long ONE_MEGABYTE = 512 * 512;
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        storageRef.child("profile_pictures/" + uid + ".jpeg").getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
             @Override
             public void onSuccess(byte[] bytes) {
                 if(bytes != null) {
@@ -187,6 +193,7 @@ public class MainActivity extends AppCompatActivity
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
+                profilePic = null;
             }
         });
     }
@@ -406,22 +413,24 @@ public class MainActivity extends AppCompatActivity
         DatabaseReference refchat = FirebaseDatabase.getInstance().getReference("chats");
         ValueEventListener postListener1 = new ValueEventListener() {
 
-            ArrayList<Chat> newChat = new ArrayList<Chat>();
+            ArrayList<Chat> newChat = new ArrayList<>();
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                Chat chat = null;
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    chat = child.getValue(Chat.class);
-                    if(chat.getDriverId().equals(uid)){
-                        newChat.add(chat);
+                if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                    Chat chat = null;
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        chat = child.getValue(Chat.class);
+                        if (chat.getDriverId().equals(uid)) {
+                            newChat.add(chat);
+                        }
                     }
+                    if (count1 < newChat.size() && count2 > 0 && (chat.getRiderId().equals(uid) || chat.getDriverId().equals(uid))) {
+                        triggerNotification("New Message!", "", count1);
+                    }
+                    count1 = newChat.size();
+                    count2++;
                 }
-                if(count1 < newChat.size() && count2 > 0 && (chat.getRiderId().equals(uid) || chat.getDriverId().equals(uid))) {
-                    triggerNotification("New Message!", "", count1);
-                }
-                count1 = newChat.size();
-                count2++;
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -436,18 +445,20 @@ public class MainActivity extends AppCompatActivity
         ValueEventListener postListener2 = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                CarpoolOffer offer = null;
-                for (DataSnapshot child : dataSnapshot.getChildren()) {
-                    offer = child.getValue(CarpoolOffer.class);
-                    if(offer.getRiderId().equals("")) {
-                        newOffer.add(offer);
+                if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    CarpoolOffer offer = null;
+                    for (DataSnapshot child : dataSnapshot.getChildren()) {
+                        offer = child.getValue(CarpoolOffer.class);
+                        if (offer.getRiderId().equals("")) {
+                            newOffer.add(offer);
+                        }
                     }
+                    if (count4 < newOffer.size() && count3 > 0 && !offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) && !offer.getRiderRated() && !offer.getDriverRated()) {
+                        triggerNotification("New ride offer!", offer.getDestination() + "\n" + offer.getDeparture(), count3);
+                    }
+                    count4 = newOffer.size();
+                    count3++;
                 }
-                if(count4 < newOffer.size() && count3 > 0 && !offer.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid()) && !offer.getRiderRated() && !offer.getDriverRated()) {
-                    triggerNotification("New ride offer!", offer.getDestination() + "\n" + offer.getDeparture(), count3);
-                }
-                count4 = newOffer.size();
-                count3++;
             }
 
             @Override
@@ -493,8 +504,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void logout()
-    {
+    public void logout() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        ImageView i = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_pic);
+        i.setImageResource(R.mipmap.ic_launcher);
         System.out.println("");
         FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, LoginActivity.class);

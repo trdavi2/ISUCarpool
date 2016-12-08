@@ -122,7 +122,7 @@ public class RidesListAdapter extends ArrayAdapter<CarpoolOffer> {
                     });
                 }
             }
-            if(dr != null) {
+            if(dr != null && !p.getDriverId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
                 if(ratingList.size() > 0) {
                     dr.setText("Rating: " + ratingList.get(position) + "/5.0");
                 }

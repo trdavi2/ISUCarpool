@@ -134,6 +134,12 @@ public class UserProfileActivity extends AppCompatActivity {
         ref.addValueEventListener(postListener);
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        profilePicture.setImageBitmap(null);
+    }
+
     public void loadProfilePicture() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("profilePic");
         ValueEventListener postListener = new ValueEventListener() {
